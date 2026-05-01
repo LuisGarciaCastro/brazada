@@ -16,10 +16,34 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 
+<!-- iOS PWA splash screens (per-device sizes) -->
+<link rel="apple-touch-startup-image" href="splash-1290x2796.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-1179x2556.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-1170x2532.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-1284x2778.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-828x1792.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+<link rel="apple-touch-startup-image" href="splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+
 <title>Brazada — Diario de natación</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Theme init — must run before paint to avoid flash of wrong theme
+  (function(){
+    var saved = null;
+    try{ saved = localStorage.getItem('brazada_theme'); }catch(e){}
+    var theme;
+    if(saved === 'light' || saved === 'dark'){
+      theme = saved;
+    } else {
+      // Auto: follow system preference
+      theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 <style>
 :root{
   --deep:#072a36;
@@ -36,6 +60,41 @@
   --line:rgba(10,61,74,0.12);
   --line-soft:rgba(10,61,74,0.06);
   --shadow:0 1px 2px rgba(7,42,54,0.04), 0 8px 24px rgba(7,42,54,0.06);
+
+  /* Semantic surfaces (used selectively where light/dark differs most) */
+  --bg:var(--bone);
+  --surface:#ffffff;
+  --surface-2:var(--sand);
+  --bg-radial-1:rgba(168,216,222,0.35);
+  --bg-radial-2:rgba(232,117,89,0.07);
+  /* Always-light for text on dark gradients (hero card, etc.) */
+  --on-dark:#fbf7ef;
+}
+
+/* Dark mode — designed dark-first, not inverted.
+   Tinted neutrals (warm-cool teals), no pure black, halos for depth. */
+html[data-theme="dark"]{
+  --deep:#020e13;
+  --abyss:#0a2630;        /* was #0a3d4a — deeper to be the bg surface */
+  --water:#0e5b6f;        /* unchanged — used as accent now */
+  --tide:#5fa4b5;         /* lighter so it pops on dark */
+  --foam:#a8d8de;         /* unchanged */
+  --sand:#1a3540;         /* repurposed: dark "warm" surface for cards */
+  --bone:#0a1f26;         /* page bg — deep teal-black (NOT pure black) */
+  --coral:#f08a72;        /* slightly brighter coral for dark */
+  --gold:#e0b85c;         /* slightly brighter gold for dark */
+  --ink:#e8ddc4;          /* warm off-white, NOT #fff */
+  --muted:#7a9aa4;        /* lighter than light-mode muted */
+  --line:rgba(232,221,196,0.10);
+  --line-soft:rgba(232,221,196,0.06);
+  --shadow:0 1px 2px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35);
+
+  --bg:#0a1f26;
+  --surface:#13313c;       /* primary card surface (luminance shift) */
+  --surface-2:#1a3a47;     /* elevated card surface */
+  --bg-radial-1:rgba(94,164,181,0.10);
+  --bg-radial-2:rgba(240,138,114,0.06);
+  --on-dark:#fbf7ef;
 }
 
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -43,7 +102,7 @@ html,body{overscroll-behavior:none;}
 
 body{
   font-family:'Inter Tight', sans-serif;
-  background:var(--bone);
+  background:var(--bg);
   color:var(--ink);
   font-size:16px;
   line-height:1.5;
@@ -52,9 +111,10 @@ body{
   padding-top:env(safe-area-inset-top);
   padding-bottom:env(safe-area-inset-bottom);
   background-image:
-    radial-gradient(circle at 15% -10%, rgba(168,216,222,0.35), transparent 50%),
-    radial-gradient(circle at 90% 100%, rgba(232,117,89,0.07), transparent 40%);
+    radial-gradient(circle at 15% -10%, var(--bg-radial-1), transparent 50%),
+    radial-gradient(circle at 90% 100%, var(--bg-radial-2), transparent 40%);
   background-attachment:fixed;
+  transition:background-color 0.3s ease, color 0.3s ease;
 }
 
 .app{
@@ -62,6 +122,290 @@ body{
   margin:0 auto;
   padding:0 0 100px;
   position:relative;
+}
+
+/* ---------- WELCOME SCREEN (first run) ---------- */
+.welcome-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:linear-gradient(160deg, #072a36 0%, #0a3d4a 50%, #0e5b6f 100%);
+  color:#fbf7ef;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:env(safe-area-inset-top) 32px env(safe-area-inset-bottom);
+  overflow:hidden;
+  animation:fadeIn .6s ease-out;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.welcome-screen.exiting{animation:fadeOut .4s ease-in forwards;}
+@keyframes fadeOut{from{opacity:1;}to{opacity:0;transform:scale(1.05);}}
+.welcome-waves{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:0.18;
+}
+.welcome-glow{
+  position:absolute;
+  width:600px;
+  height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(232,117,89,0.25) 0%, transparent 60%);
+  pointer-events:none;
+  animation:glowPulse 6s ease-in-out infinite;
+}
+.welcome-glow.tl{top:-200px;left:-200px;}
+.welcome-glow.br{bottom:-200px;right:-200px;background:radial-gradient(circle, rgba(168,216,222,0.18) 0%, transparent 60%);animation-delay:2s;}
+@keyframes glowPulse{
+  0%,100%{transform:scale(1);opacity:0.7;}
+  50%{transform:scale(1.15);opacity:1;}
+}
+.welcome-top{
+  width:100%;
+  padding-top:60px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+.welcome-mark{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:300;
+  font-size:14px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:#a8d8de;
+  opacity:0.85;
+  margin-bottom:8px;
+  animation:slideDown .8s ease-out .2s both;
+}
+.welcome-mark .dot{color:#e87559;font-style:normal;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px);}to{opacity:0.85;transform:translateY(0);}}
+.welcome-center{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  width:100%;
+}
+.welcome-title{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:78px;
+  line-height:0.95;
+  letter-spacing:-0.04em;
+  margin-bottom:14px;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .4s both;
+}
+.welcome-title .dot{color:#e87559;font-style:normal;}
+@keyframes welcomeRise{
+  from{opacity:0;transform:translateY(40px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.welcome-tagline{
+  font-family:'Inter Tight', sans-serif;
+  font-weight:300;
+  font-size:17px;
+  letter-spacing:-0.005em;
+  color:#a8d8de;
+  opacity:0.85;
+  max-width:280px;
+  line-height:1.45;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .65s both;
+}
+.welcome-divider{
+  width:40px;
+  height:1px;
+  background:#a8d8de;
+  opacity:0.3;
+  margin:18px 0 16px;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .55s both;
+}
+.welcome-bottom{
+  width:100%;
+  padding-bottom:24px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .9s both;
+}
+.welcome-cta{
+  background:#e87559;
+  color:#fbf7ef;
+  border:none;
+  border-radius:18px;
+  padding:18px 28px;
+  font-family:'Inter Tight', sans-serif;
+  font-size:16px;
+  font-weight:500;
+  letter-spacing:0.02em;
+  cursor:pointer;
+  width:100%;
+  max-width:340px;
+  box-shadow:0 8px 24px rgba(232,117,89,0.3);
+  transition:transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.welcome-cta:active{
+  transform:translateY(1px) scale(0.99);
+  box-shadow:0 4px 14px rgba(232,117,89,0.25);
+}
+.welcome-meta{
+  margin-top:18px;
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:600;
+  color:#a8d8de;
+  opacity:0.55;
+}
+
+/* ---------- MILESTONE CELEBRATION SCREEN ---------- */
+.milestone-screen{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  background:linear-gradient(165deg, #072a36 0%, #0a3d4a 45%, #0e5b6f 100%);
+  color:#fbf7ef;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:env(safe-area-inset-top) 32px env(safe-area-inset-bottom);
+  overflow:hidden;
+  animation:fadeIn .4s ease-out;
+  cursor:pointer;
+}
+.milestone-screen.exiting{animation:fadeOut .4s ease-in forwards;}
+.milestone-glow{
+  position:absolute;
+  width:500px;
+  height:500px;
+  border-radius:50%;
+  pointer-events:none;
+  animation:glowPulse 4s ease-in-out infinite;
+}
+.milestone-glow.tl{
+  top:-150px; left:-150px;
+  background:radial-gradient(circle, rgba(232,117,89,0.30) 0%, transparent 60%);
+}
+.milestone-glow.br{
+  bottom:-150px; right:-150px;
+  background:radial-gradient(circle, rgba(212,167,74,0.20) 0%, transparent 60%);
+  animation-delay:1.5s;
+}
+.milestone-confetti{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;
+  top:-20px;
+  border-radius:2px;
+  animation:confettiFall 3.5s linear infinite;
+  opacity:0.85;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:0;}
+  10%{opacity:0.85;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+.milestone-content{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  width:100%;
+}
+.milestone-eyebrow{
+  font-family:'Inter Tight', sans-serif;
+  font-size:11px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:#e87559;
+  font-weight:600;
+  margin-bottom:14px;
+  animation:slideDown .6s ease-out .1s both;
+}
+.milestone-title{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:54px;
+  line-height:1.05;
+  letter-spacing:-0.03em;
+  margin-bottom:10px;
+  animation:welcomeRise .9s cubic-bezier(0.2, 0.9, 0.3, 1) .25s both;
+}
+.milestone-divider{
+  width:36px;
+  height:1px;
+  background:#a8d8de;
+  opacity:0.4;
+  margin:14px 0 14px;
+  animation:welcomeRise .9s cubic-bezier(0.2, 0.9, 0.3, 1) .35s both;
+}
+.milestone-subtitle{
+  font-size:16px;
+  color:#a8d8de;
+  opacity:0.9;
+  font-weight:300;
+  letter-spacing:-0.005em;
+  max-width:280px;
+  line-height:1.45;
+  animation:welcomeRise .9s cubic-bezier(0.2, 0.9, 0.3, 1) .45s both;
+}
+.milestone-sub2{
+  margin-top:12px;
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:14px;
+  color:#d4a74a;
+  animation:welcomeRise .9s cubic-bezier(0.2, 0.9, 0.3, 1) .55s both;
+}
+.milestone-bottom{
+  width:100%;
+  padding-bottom:24px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  animation:welcomeRise .9s cubic-bezier(0.2, 0.9, 0.3, 1) .7s both;
+}
+.milestone-cta{
+  background:rgba(255,255,255,0.12);
+  color:#fbf7ef;
+  border:1px solid rgba(255,255,255,0.25);
+  border-radius:14px;
+  padding:14px 28px;
+  font-family:'Inter Tight', sans-serif;
+  font-size:14px;
+  font-weight:500;
+  letter-spacing:0.04em;
+  cursor:pointer;
+  width:100%;
+  max-width:340px;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:transform .15s, background .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.milestone-cta:active{
+  transform:scale(0.98);
+  background:rgba(255,255,255,0.18);
 }
 
 /* ---------- HEADER ---------- */
@@ -76,10 +420,36 @@ body{
   font-weight:500;
   font-style:italic;
   font-size:20px;
-  color:var(--abyss);
+  color:var(--ink);
   letter-spacing:-0.01em;
 }
 .brand span{color:var(--coral);}
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.theme-toggle{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background .2s, color .2s, transform .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.theme-toggle:active{transform:scale(0.92);}
+.theme-toggle:hover{color:var(--ink);background:var(--surface);}
+/* Show the icon for the OPPOSITE theme (the action user takes by clicking) */
+.theme-toggle .icon-sun{display:none;}
+.theme-toggle .icon-moon{display:block;}
+html[data-theme="dark"] .theme-toggle .icon-sun{display:block;}
+html[data-theme="dark"] .theme-toggle .icon-moon{display:none;}
 .date-pill{
   font-size:11px;
   letter-spacing:0.18em;
@@ -112,8 +482,12 @@ body{
   letter-spacing:0.01em;
 }
 .tab.active{
-  background:var(--abyss);
-  color:var(--bone);
+  background:var(--ink);
+  color:var(--bg);
+}
+html[data-theme="dark"] .tab.active{
+  background:var(--ink);
+  color:var(--abyss);
 }
 .tab{
   position:relative;
@@ -139,7 +513,7 @@ body{
   padding:24px 22px 26px;
   background:linear-gradient(155deg, var(--abyss) 0%, var(--water) 60%, var(--tide) 130%);
   border-radius:24px;
-  color:var(--bone);
+  color:#fbf7ef;
   position:relative;
   overflow:hidden;
   box-shadow:0 12px 32px rgba(7,42,54,0.18);
@@ -152,6 +526,18 @@ body{
     radial-gradient(circle at 90% 10%, rgba(168,216,222,0.18), transparent 50%),
     radial-gradient(circle at 10% 100%, rgba(232,117,89,0.12), transparent 50%);
   pointer-events:none;
+}
+.hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  /* Subtle wave pattern: 2 sine waves repeated */
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'><path d='M 0 30 Q 25 20 50 30 T 100 30 T 150 30 T 200 30' stroke='%23a8d8de' stroke-width='1' fill='none' opacity='0.5'/><path d='M 0 60 Q 25 50 50 60 T 100 60 T 150 60 T 200 60' stroke='%23a8d8de' stroke-width='1' fill='none' opacity='0.35'/></svg>");
+  background-size:200px 80px;
+  background-repeat:repeat;
+  opacity:0.18;
+  mix-blend-mode:soft-light;
 }
 .hero-meta{
   display:flex;
@@ -179,7 +565,7 @@ body{
   border-radius:999px;
   background:rgba(255,255,255,0.13);
   border:1px solid rgba(255,255,255,0.2);
-  color:var(--bone);
+  color:var(--on-dark);
   backdrop-filter:blur(4px);
 }
 .hero-title{
@@ -232,6 +618,21 @@ body{
 .hero.rest{
   background:linear-gradient(155deg, #2a4a52 0%, #3a6470 100%);
 }
+.rest-illustration{
+  display:block;
+  width:100%;
+  max-width:240px;
+  height:auto;
+  margin:8px auto 16px;
+  color:#a8d8de;
+  position:relative;
+  z-index:1;
+  animation:fadeInRest .8s ease-out;
+}
+@keyframes fadeInRest{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:0.95;transform:translateY(0);}
+}
 
 /* ---------- SECTION ---------- */
 .section{
@@ -251,7 +652,7 @@ body{
 
 /* ---------- BLOCKS (sesión) ---------- */
 .blocks{
-  background:white;
+  background:var(--surface);
   border-radius:20px;
   padding:6px;
   box-shadow:var(--shadow);
@@ -321,7 +722,7 @@ body{
   height:32px;
   border-radius:50%;
   border:1.5px solid var(--line);
-  background:var(--bone);
+  background:var(--surface);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -344,8 +745,8 @@ body{
   border-color:var(--abyss);
 }
 .block.done .check-btn .tick{
-  border-left-color:var(--bone);
-  border-bottom-color:var(--bone);
+  border-left-color:var(--on-dark);
+  border-bottom-color:var(--on-dark);
 }
 .block-desc{
   max-height:0;
@@ -406,7 +807,7 @@ body{
 }
 .btn-primary{
   background:var(--abyss);
-  color:var(--bone);
+  color:var(--on-dark);
 }
 .btn-primary:active{transform:scale(0.98);background:var(--water);}
 .btn-secondary{
@@ -419,14 +820,418 @@ body{
 .btn-coral{background:var(--coral);color:white;}
 .btn-coral:active{background:#d56549;}
 
+/* ---------- PROGRESS RINGS ---------- */
+.rings-card{
+  background:var(--surface);
+  border-radius:24px;
+  padding:24px 22px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.rings-svg-wrap{
+  flex-shrink:0;
+}
+.rings-svg{
+  display:block;
+  filter:drop-shadow(0 4px 12px rgba(7,42,54,0.08));
+}
+.ring-progress{
+  transition:stroke-dashoffset 1.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.rings-legend{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  flex:1;
+  min-width:0;
+}
+.ring-legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.ring-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.ring-label{
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  flex:1;
+}
+.ring-val{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:16px;
+  color:var(--ink);
+  font-weight:500;
+}
+
+/* On smaller screens, stack vertically */
+@media (max-width: 380px){
+  .rings-card{
+    flex-direction:column;
+    text-align:center;
+  }
+  .rings-legend{
+    width:100%;
+  }
+}
+
 /* ---------- LOG / STATS ---------- */
 .stat-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
+
+/* ---------- WEEK PREVIEW (calendar tab) ---------- */
+.day-detail{
+  margin-top:14px;
+  background:var(--surface);
+  border-radius:16px;
+  padding:18px 18px;
+  box-shadow:var(--shadow);
+  animation:fadeInUp .25s ease-out;
+  position:relative;
+  overflow:hidden;
+}
+.dd-stripe{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:4px;
+  border-radius:4px 0 0 4px;
+}
+@keyframes fadeInUp{
+  from{opacity:0;transform:translateY(-6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.day-detail.today{
+  background:linear-gradient(135deg, var(--abyss), var(--water));
+  color:var(--on-dark);
+}
+.day-detail.rest-day{
+  background:transparent;
+  border:1.5px dashed var(--line);
+  box-shadow:none;
+}
+.dd-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:14px;
+  gap:10px;
+}
+.dd-date{
+  font-family:'Fraunces', serif;
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  line-height:1.2;
+}
+.day-detail.today .dd-date{color:var(--on-dark);}
+.dd-context{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin-top:3px;
+}
+.day-detail.today .dd-context{color:var(--foam);opacity:0.85;}
+.dd-status{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  font-weight:700;
+  padding:4px 10px;
+  border-radius:999px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.dd-status.done{background:var(--coral);color:white;}
+.dd-status.skipped{background:var(--line);color:var(--muted);}
+.dd-status.rest-pill{background:var(--line-soft);color:var(--muted);}
+.dd-session-name{
+  font-family:'Fraunces', serif;
+  font-size:24px;
+  font-weight:500;
+  letter-spacing:-0.02em;
+  margin-bottom:4px;
+  line-height:1.15;
+}
+.day-detail.today .dd-session-name{color:var(--on-dark);}
+.dd-session-name em{
+  font-style:italic;
+  color:var(--water);
+}
+.day-detail.today .dd-session-name em{color:var(--foam);}
+.dd-stroke{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.day-detail.today .dd-stroke{color:var(--foam);opacity:0.85;}
+.dd-stats{
+  display:flex;
+  gap:18px;
+  padding:12px 0;
+  border-top:1px solid var(--line-soft);
+  border-bottom:1px solid var(--line-soft);
+  margin-bottom:14px;
+}
+.day-detail.today .dd-stats{
+  border-color:rgba(255,255,255,0.15);
+}
+.dd-stat{flex:1;}
+.dd-stat .v{
+  font-family:'Fraunces', serif;
+  font-size:20px;
+  line-height:1;
+  font-weight:500;
+}
+.dd-stat .l{
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin-top:4px;
+}
+.day-detail.today .dd-stat .l{color:var(--foam);opacity:0.7;}
+.dd-blocks{
+  font-size:13px;
+  line-height:1.6;
+}
+.dd-block-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:6px 0;
+}
+.dd-block-row:not(:last-child){
+  border-bottom:1px dashed var(--line-soft);
+}
+.day-detail.today .dd-block-row:not(:last-child){
+  border-bottom-color:rgba(255,255,255,0.15);
+}
+.dd-block-name{color:var(--ink);}
+.day-detail.today .dd-block-name{color:var(--on-dark);opacity:0.92;}
+.dd-block-dist{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  color:var(--water);
+  font-weight:500;
+  white-space:nowrap;
+}
+.day-detail.today .dd-block-dist{color:var(--foam);}
+.dd-cta{
+  margin-top:14px;
+  display:block;
+  width:100%;
+  background:var(--abyss);
+  color:var(--on-dark);
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  text-align:center;
+}
+.dd-cta:active{transform:scale(0.99);}
+.day-detail.today .dd-cta{
+  background:var(--surface);
+  color:var(--abyss);
+}
+.dd-rest-explain{
+  font-size:14px;
+  line-height:1.55;
+  color:var(--ink);
+}
+.dd-notes{
+  margin-top:12px;
+  padding:10px 12px;
+  background:var(--sand);
+  border-radius:10px;
+  font-size:13px;
+  font-style:italic;
+  color:var(--ink);
+  line-height:1.5;
+}
+.day-detail.today .dd-notes{
+  background:rgba(255,255,255,0.1);
+  color:var(--on-dark);
+}
+.week-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+  padding:0 4px;
+}
+.week-nav-title{
+  font-family:'Fraunces', serif;
+  font-size:15px;
+  font-weight:500;
+  color:var(--ink);
+}
+.week-nav-title .sub{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  font-family:'Inter Tight', sans-serif;
+  font-style:normal;
+  margin-bottom:2px;
+}
+.week-nav button{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:var(--surface);
+  cursor:pointer;
+  font-size:14px;
+  color:var(--abyss);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.week-nav button:active{background:var(--sand);}
+.week-nav .arrows{display:flex;gap:6px;}
+.week-cards{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.week-card{
+  background:var(--surface);
+  border-radius:14px;
+  padding:12px 14px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  cursor:pointer;
+  transition:background .12s, transform .12s;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.week-card:active{transform:scale(0.99);}
+.week-card.today{
+  background:linear-gradient(135deg, var(--abyss), var(--water));
+  color:var(--on-dark);
+}
+.week-card.today .wc-name,
+.week-card.today .wc-dist{color:var(--on-dark);}
+.week-card.today .wc-day{color:var(--foam);}
+.week-card.today .wc-stroke{color:var(--foam);opacity:0.85;}
+.week-card.done{
+  background:var(--sand);
+}
+.week-card.skipped{
+  opacity:0.55;
+}
+.week-card.rest{
+  background:transparent;
+  border:1.5px dashed var(--line);
+  box-shadow:none;
+  opacity:0.7;
+}
+.wc-day{
+  flex-shrink:0;
+  width:42px;
+  text-align:center;
+}
+.wc-day-name{
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+}
+.wc-day-num{
+  font-family:'Fraunces', serif;
+  font-size:22px;
+  line-height:1;
+  font-weight:500;
+  color:var(--ink);
+  margin-top:3px;
+}
+.week-card.today .wc-day-num{color:var(--on-dark);}
+.week-card.today .wc-day-name{color:var(--foam);}
+.wc-divider{
+  width:1px;
+  align-self:stretch;
+  background:var(--line-soft);
+  flex-shrink:0;
+}
+.week-card.today .wc-divider{background:rgba(255,255,255,0.2);}
+.week-card.rest .wc-divider{display:none;}
+.wc-info{
+  flex:1;
+  min-width:0;
+}
+.wc-name{
+  font-size:14px;
+  font-weight:600;
+  color:var(--ink);
+  letter-spacing:-0.005em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.wc-stroke{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:1px;
+}
+.wc-meta{
+  flex-shrink:0;
+  text-align:right;
+}
+.wc-dist{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:14px;
+  color:var(--water);
+  font-weight:500;
+}
+.week-card.today .wc-dist{color:var(--foam);font-style:italic;}
+.wc-status{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin-top:2px;
+}
+.wc-status.done{color:var(--coral);}
+.wc-status.skipped{color:var(--muted);}
+.week-card.today .wc-status{color:var(--foam);opacity:0.7;}
+.wc-rest-label{
+  flex:1;
+  font-style:italic;
+  color:var(--muted);
+  font-size:13px;
+}
 .stat-card{
-  background:white;
+  background:var(--surface);
   border-radius:18px;
   padding:18px 18px;
   box-shadow:var(--shadow);
@@ -469,7 +1274,7 @@ body{
 
 /* ---------- CALENDAR ---------- */
 .calendar{
-  background:white;
+  background:var(--surface);
   border-radius:20px;
   padding:18px;
   box-shadow:var(--shadow);
@@ -496,7 +1301,7 @@ body{
   height:32px;
   border-radius:50%;
   border:1px solid var(--line);
-  background:white;
+  background:var(--surface);
   cursor:pointer;
   font-size:14px;
   color:var(--abyss);
@@ -529,12 +1334,16 @@ body{
   position:relative;
   font-weight:500;
   color:var(--ink);
+  cursor:pointer;
+  transition:background .12s, transform .1s;
+  -webkit-tap-highlight-color:transparent;
 }
-.cal-day.empty{color:transparent;pointer-events:none;}
+.cal-day:not(.empty):active{transform:scale(0.92);}
+.cal-day.empty{color:transparent;pointer-events:none;cursor:default;}
 .cal-day.future{color:var(--muted);opacity:0.4;}
 .cal-day.today{
   background:var(--abyss);
-  color:var(--bone);
+  color:var(--on-dark);
 }
 .cal-day.done:not(.today){
   background:var(--foam);
@@ -543,6 +1352,19 @@ body{
 .cal-day.done.today{
   background:var(--coral);
   color:white;
+}
+.cal-day.selected:not(.today):not(.done){
+  background:var(--sand);
+  outline:2px solid var(--abyss);
+  outline-offset:-2px;
+}
+.cal-day.selected.today{
+  outline:2px solid var(--coral);
+  outline-offset:2px;
+}
+.cal-day.selected.done:not(.today){
+  outline:2px solid var(--abyss);
+  outline-offset:-2px;
 }
 .cal-day.skipped{
   color:var(--muted);
@@ -565,7 +1387,7 @@ body{
 
 /* ---------- LOG LIST ---------- */
 .log-list{
-  background:white;
+  background:var(--surface);
   border-radius:20px;
   padding:6px;
   box-shadow:var(--shadow);
@@ -573,6 +1395,18 @@ body{
 .log-item{
   padding:14px;
   border-bottom:1px solid var(--line-soft);
+  position:relative;
+  padding-left:18px;
+}
+.log-item::before{
+  content:'';
+  position:absolute;
+  left:6px;
+  top:14px;
+  bottom:14px;
+  width:3px;
+  border-radius:3px;
+  background:var(--stripe-color, transparent);
 }
 .log-item:last-child{border-bottom:none;}
 .log-row{
@@ -629,7 +1463,7 @@ body{
 
 /* ---------- CHART ---------- */
 .chart{
-  background:white;
+  background:var(--surface);
   border-radius:20px;
   padding:18px;
   box-shadow:var(--shadow);
@@ -687,7 +1521,7 @@ body{
 @keyframes fade{from{opacity:0;}to{opacity:1;}}
 @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
 .modal{
-  background:var(--bone);
+  background:var(--surface);
   width:100%;
   max-width:520px;
   border-radius:24px 24px 0 0;
@@ -722,7 +1556,7 @@ body{
 }
 .field input[type="number"], .field textarea{
   width:100%;
-  background:white;
+  background:var(--surface);
   border:1.5px solid var(--line);
   border-radius:12px;
   padding:12px 14px;
@@ -743,7 +1577,7 @@ body{
 .feel-btn{
   flex:1;
   padding:14px 4px;
-  background:white;
+  background:var(--surface);
   border:1.5px solid var(--line);
   border-radius:12px;
   cursor:pointer;
@@ -761,7 +1595,7 @@ body{
   background:linear-gradient(155deg, var(--deep), var(--water));
   border-radius:20px;
   padding:28px 22px;
-  color:var(--bone);
+  color:var(--on-dark);
   text-align:center;
   box-shadow:var(--shadow);
 }
@@ -782,7 +1616,7 @@ body{
 .timer-btn{
   background:rgba(255,255,255,0.15);
   border:1px solid rgba(255,255,255,0.25);
-  color:var(--bone);
+  color:var(--on-dark);
   padding:12px 24px;
   border-radius:999px;
   font-family:inherit;
@@ -795,7 +1629,7 @@ body{
 
 /* ---------- DRY EXERCISES ---------- */
 .dry-list{
-  background:white;
+  background:var(--surface);
   border-radius:20px;
   padding:6px;
   box-shadow:var(--shadow);
@@ -821,7 +1655,7 @@ body{
   height:30px;
   border-radius:50%;
   border:1.5px solid var(--line);
-  background:var(--bone);
+  background:var(--surface);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -841,8 +1675,8 @@ body{
   border-color:var(--abyss);
 }
 .dry-item.done .dry-check .tick{
-  border-left-color:var(--bone);
-  border-bottom-color:var(--bone);
+  border-left-color:var(--on-dark);
+  border-bottom-color:var(--on-dark);
 }
 .dry-item.done .dry-name{
   color:var(--muted);
@@ -924,7 +1758,7 @@ body{
   left:50%;
   transform:translateX(-50%);
   background:var(--abyss);
-  color:var(--bone);
+  color:var(--on-dark);
   padding:12px 20px;
   border-radius:999px;
   font-size:14px;
@@ -946,7 +1780,7 @@ body{
 .day-picker::-webkit-scrollbar{display:none;}
 .day-pick{
   flex-shrink:0;
-  background:white;
+  background:var(--surface);
   border:1.5px solid var(--line);
   border-radius:14px;
   padding:8px 12px;
@@ -959,7 +1793,7 @@ body{
 .day-pick.active{
   background:var(--abyss);
   border-color:var(--abyss);
-  color:var(--bone);
+  color:var(--on-dark);
 }
 .day-pick.done{
   background:var(--foam);
@@ -968,7 +1802,7 @@ body{
 .day-pick.done.active{
   background:var(--abyss);
   border-color:var(--abyss);
-  color:var(--bone);
+  color:var(--on-dark);
 }
 .dp-dow{
   font-size:10px;
@@ -1001,10 +1835,10 @@ body{
   background:var(--abyss);
   border-color:var(--abyss);
   border-style:solid;
-  color:var(--bone);
+  color:var(--on-dark);
   opacity:1;
 }
-.day-pick.rest.active .dp-num{color:var(--bone);}
+.day-pick.rest.active .dp-num{color:var(--on-dark);}
 
 /* small text helper */
 .muted{color:var(--muted);font-size:13px;}
@@ -1022,13 +1856,19 @@ body{
   <!-- ===== TOP BAR ===== -->
   <header class="topbar">
     <div class="brand">Brazada<span>.</span></div>
-    <div class="date-pill" id="topDate">—</div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div class="date-pill" id="topDate">—</div>
+    </div>
   </header>
 
   <!-- ===== TABS ===== -->
   <nav class="tabs" id="tabs">
     <button class="tab active" data-tab="hoy">Hoy</button>
-    <button class="tab" data-tab="semana">Semana</button>
+    <button class="tab" data-tab="semana">Calendario</button>
     <button class="tab" data-tab="historial">Historial</button>
     <button class="tab" data-tab="progreso">Progreso</button>
     <button class="tab" data-tab="seco">En seco</button>
@@ -1576,6 +2416,8 @@ let state = {
   logs: {},               // { 'YYYY-MM-DD': { done, distance, feel, notes, blocksDone:[idx] } }
   selectedDate: null,     // YYYY-MM-DD currently viewed
   calMonth: null,         // {year, month}
+  weekPreviewMonday: null, // ISO date of Monday for the week-by-week preview
+  calSelectedDay: null,    // ISO date currently selected in the calendar (shows detail below)
   activeTab: 'hoy',
   timer: { running:false, ms:0, started:null }
 };
@@ -1592,15 +2434,19 @@ async function loadState(){
     state.startDate = todayISO();
     await saveState();
   }
+  if(!state.milestonesShown) state.milestonesShown = [];
   state.selectedDate = todayISO();
   const t = new Date();
   state.calMonth = { year: t.getFullYear(), month: t.getMonth() };
+  state.weekPreviewMonday = getMondayOf(todayISO());
+  state.calSelectedDay = todayISO();
 }
 
 async function saveState(){
   const persist = {
     startDate: state.startDate,
     logs: state.logs,
+    milestonesShown: state.milestonesShown || [],
   };
   try{
     localStorage.setItem('brazada_state', JSON.stringify(persist));
@@ -1669,6 +2515,23 @@ function isRestDay(iso){
  */
 function getLongSessionTotal(week){
   return week <= 3 ? 900 : 1200;
+}
+
+/**
+ * Color identifier per session type. Used as a 4px left border on cards
+ * to give visual identity at a glance — like MySwimPro / Strong workout cards.
+ */
+const SESSION_COLORS = {
+  1: 'var(--foam)',    // Lunes — Técnica + suave (didáctico)
+  2: 'var(--coral)',   // Martes — Series cortas (intensidad)
+  3: 'var(--water)',   // Miércoles — Espalda y postura (reparación)
+  4: 'var(--abyss)',   // Jueves — Pull / brazos (fuerza)
+  5: 'var(--gold)',    // Viernes — Patada / piernas (movimiento)
+  6: 'var(--tide)',    // Sábado — Aeróbico continuo (calma sostenida)
+  7: 'var(--tide)',    // Domingo — Sesión variada
+};
+function getSessionColor(idx){
+  return SESSION_COLORS[idx] || 'var(--muted)';
 }
 
 function getSessionForDate(iso){
@@ -1856,6 +2719,17 @@ $tabs.addEventListener('click', e=>{
   }
 });
 
+// ===== Theme toggle =====
+const $themeToggle = document.getElementById('themeToggle');
+if($themeToggle){
+  $themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('brazada_theme', next); }catch(e){}
+  });
+}
+
 function updateTopDate(){
   const d = new Date();
   $topDate.textContent = DOW_NAMES[d.getDay()].toUpperCase() + ' · ' + d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0,3);
@@ -1913,6 +2787,20 @@ function renderHoy(){
           <div class="hero-day">Sem ${week} · ${DOW_FULL[d.getDay()]}</div>
           <div class="phase-chip">${phase}</div>
         </div>
+        ${isRest ? `<svg class="rest-illustration" viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Moon crescent (filled circle minus mask circle) -->
+          <circle cx="180" cy="40" r="18" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0.55"/>
+          <circle cx="186" cy="36" r="14" fill="#3a6470" opacity="1"/>
+          <!-- Stars -->
+          <circle cx="60" cy="28" r="1.2" fill="currentColor" opacity="0.6"/>
+          <circle cx="100" cy="44" r="1" fill="currentColor" opacity="0.5"/>
+          <circle cx="140" cy="22" r="1.4" fill="currentColor" opacity="0.7"/>
+          <circle cx="40" cy="50" r="0.9" fill="currentColor" opacity="0.4"/>
+          <!-- Calm water lines -->
+          <path d="M 10 80 Q 40 76 70 80 T 130 80 T 190 80 T 230 80" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.5"/>
+          <path d="M 10 95 Q 40 91 70 95 T 130 95 T 190 95 T 230 95" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.4"/>
+          <path d="M 10 110 Q 40 106 70 110 T 130 110 T 190 110 T 230 110" stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.3"/>
+        </svg>` : ''}
         <h1 class="hero-title">${title}</h1>
         <div class="hero-sub">${subtitle}</div>
       </div>
@@ -1935,11 +2823,11 @@ function renderHoy(){
       <div class="stat-grid">
         <div class="stat-card flame">
           <div class="stat-label">Racha</div>
-          <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+          <div class="stat-value"><span data-animate-num="${calcStreak()}">${calcStreak()}</span><span class="unit">días</span></div>
         </div>
         <div class="stat-card">
           <div class="stat-label">Esta semana</div>
-          <div class="stat-value">${(weekDistance(monday)/1000).toFixed(1)}<span class="unit">km</span></div>
+          <div class="stat-value"><span data-animate-num="${(weekDistance(monday)/1000).toFixed(1)}">${(weekDistance(monday)/1000).toFixed(1)}</span><span class="unit">km</span></div>
         </div>
       </div>
     </section>`;
@@ -2016,11 +2904,11 @@ function renderHoy(){
     <div class="stat-grid">
       <div class="stat-card flame">
         <div class="stat-label">Racha</div>
-        <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+        <div class="stat-value"><span data-animate-num="${calcStreak()}">${calcStreak()}</span><span class="unit">días</span></div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Esta semana</div>
-        <div class="stat-value">${(weekDistance(monday)/1000).toFixed(1)}<span class="unit">km</span></div>
+        <div class="stat-value"><span data-animate-num="${(weekDistance(monday)/1000).toFixed(1)}">${(weekDistance(monday)/1000).toFixed(1)}</span><span class="unit">km</span></div>
       </div>
     </div>
   </section>`;
@@ -2147,6 +3035,7 @@ function openCompleteModal(iso){
     const distVal = parseInt(document.getElementById('fDist').value) || session.total;
     const notes = document.getElementById('fNotes').value.trim();
     const info = getSessionForDate(iso);
+    const wasNotDone = !(state.logs[iso] && state.logs[iso].done);
     state.logs[iso] = {
       ...(state.logs[iso] || {}),
       done: true,
@@ -2154,16 +3043,150 @@ function openCompleteModal(iso){
       distance: distVal,
       feel: pickedFeel,
       notes: notes,
-      sessionIdx: info.sessionIdx, // remember WHICH session was done that day
+      sessionIdx: info.sessionIdx,
       blocksDone: info.session.blocks.map((_,i)=>i)
     };
     await saveState();
     closeModal();
-    toast('¡Sesión registrada! 🏊');
+    // Only check milestones on first completion (avoid re-triggering on edit)
+    if(wasNotDone){
+      const milestone = checkMilestones();
+      if(milestone){
+        showMilestoneScreen(milestone);
+      } else {
+        toast('¡Sesión registrada! 🏊');
+      }
+    } else {
+      toast('Sesión actualizada');
+    }
     render();
   });
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+/* ============================================================
+   MILESTONES
+============================================================ */
+const MILESTONES = [
+  // ---- First-time milestones (priority order) ----
+  { id: 'first_session', title: 'Primera sesión', subtitle: 'Has empezado tu vuelta al agua',
+    check: () => sessionsCompleted() === 1 },
+  { id: 'first_km', title: '1 km', subtitle: 'Tu primer kilómetro nadado',
+    check: () => totalDistance() >= 1000 },
+  { id: 'first_week', title: 'Semana completa', subtitle: 'Has completado tu primera semana',
+    check: () => {
+      // Count distinct ISO weeks in which all planned sessions were done
+      const monIso = getMondayOf(state.startDate);
+      const m = parseISO(monIso);
+      let planned = 0, done = 0;
+      for(let i = 0; i < 7; i++){
+        const d = new Date(m); d.setDate(m.getDate() + i);
+        const iso = isoOf(d);
+        const info = getSessionForDate(iso);
+        if(info.session){
+          planned++;
+          const log = state.logs[iso];
+          if(log && log.done) done++;
+        }
+      }
+      return planned > 0 && done >= planned;
+    }},
+  // ---- Distance milestones ----
+  { id: 'km_5', title: '5 km totales', subtitle: 'Vas cogiendo el ritmo',
+    check: () => totalDistance() >= 5000 },
+  { id: 'km_10', title: '10 km totales', subtitle: 'Tu cuerpo ya recuerda',
+    check: () => totalDistance() >= 10000 },
+  { id: 'km_25', title: '25 km totales', subtitle: 'Esto es constancia',
+    check: () => totalDistance() >= 25000 },
+  { id: 'km_50', title: '50 km totales', subtitle: 'Medio centenar bajo el agua',
+    check: () => totalDistance() >= 50000 },
+  { id: 'km_100', title: '100 km totales', subtitle: 'Eres un nadador',
+    check: () => totalDistance() >= 100000 },
+  // ---- Phase completion ----
+  { id: 'phase_adapt', title: 'Adaptación completada', subtitle: 'Ya estás listo para más', sub2: 'Avanzas a Técnica',
+    check: () => weekNumber(todayISO()) > 3 && sessionsCompleted() >= 6 },
+  { id: 'phase_tecnica', title: 'Técnica completada', subtitle: 'Tu brazada ya tiene forma', sub2: 'Avanzas a Volumen',
+    check: () => weekNumber(todayISO()) > 6 && sessionsCompleted() >= 18 },
+  { id: 'phase_volumen', title: 'Volumen completado', subtitle: 'Tu resistencia es real', sub2: 'Avanzas a Definición',
+    check: () => weekNumber(todayISO()) > 10 && sessionsCompleted() >= 36 },
+  { id: 'phase_def', title: 'Plan completado', subtitle: '12 semanas. Lo conseguiste.', sub2: 'Has cerrado el plan',
+    check: () => weekNumber(todayISO()) > 12 && sessionsCompleted() >= 50 },
+  // ---- Streak milestones ----
+  { id: 'streak_7', title: 'Racha de 7 días', subtitle: 'Una semana sin saltarte',
+    check: () => calcStreak() >= 7 },
+  { id: 'streak_14', title: 'Racha de 14 días', subtitle: 'Dos semanas perfectas',
+    check: () => calcStreak() >= 14 },
+  { id: 'streak_30', title: 'Racha de 30 días', subtitle: 'Un mes ininterrumpido',
+    check: () => calcStreak() >= 30 },
+];
+
+/**
+ * Returns the next unlocked-but-not-shown milestone, or null.
+ * Marks it as shown and saves state.
+ */
+function checkMilestones(){
+  if(!state.milestonesShown) state.milestonesShown = [];
+  for(const m of MILESTONES){
+    if(state.milestonesShown.includes(m.id)) continue;
+    try{
+      if(m.check()){
+        state.milestonesShown.push(m.id);
+        saveState();
+        return m;
+      }
+    } catch(e){ /* defensive */ }
+  }
+  return null;
+}
+
+/**
+ * Full-screen celebration for a milestone. Auto-dismisses on tap or after 5s.
+ */
+function showMilestoneScreen(milestone){
+  const html = `
+    <div class="milestone-screen" id="milestoneScreen">
+      <div class="milestone-glow tl"></div>
+      <div class="milestone-glow br"></div>
+
+      <div class="milestone-confetti">
+        ${Array.from({length: 24}, (_, i) => {
+          const left = Math.random() * 100;
+          const delay = Math.random() * 2;
+          const colors = ['#e87559', '#d4a74a', '#a8d8de', '#fbf7ef'];
+          const color = colors[i % colors.length];
+          const size = 6 + Math.random() * 6;
+          return `<span class="confetti-piece" style="left:${left}%;background:${color};width:${size}px;height:${size}px;animation-delay:${delay}s;"></span>`;
+        }).join('')}
+      </div>
+
+      <div class="milestone-content">
+        <div class="milestone-eyebrow">Hito desbloqueado</div>
+        <div class="milestone-title">${milestone.title}</div>
+        <div class="milestone-divider"></div>
+        <div class="milestone-subtitle">${milestone.subtitle}</div>
+        ${milestone.sub2 ? `<div class="milestone-sub2">${milestone.sub2}</div>` : ''}
+      </div>
+
+      <div class="milestone-bottom">
+        <button class="milestone-cta" id="milestoneClose">Continuar</button>
+      </div>
+    </div>
+  `;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper.firstElementChild);
+
+  const close = () => {
+    const el = document.getElementById('milestoneScreen');
+    if(!el) return;
+    el.classList.add('exiting');
+    setTimeout(() => el.remove(), 400);
+  };
+  document.getElementById('milestoneClose').addEventListener('click', close);
+  document.getElementById('milestoneScreen').addEventListener('click', (e) => {
+    if(e.target.id === 'milestoneScreen') close();
+  });
+}
 
 /* --------- TAB: SEMANA (calendar) --------- */
 function renderSemana(){
@@ -2172,6 +3195,7 @@ function renderSemana(){
   const startOffset = (first.getDay() || 7) - 1; // Mon=0
   const lastDay = new Date(cm.year, cm.month+1, 0).getDate();
   const todayIso = todayISO();
+  const selected = state.calSelectedDay || todayIso;
 
   let cells = '';
   const dows = ['L','M','X','J','V','S','D'];
@@ -2181,6 +3205,7 @@ function renderSemana(){
     const dIso = cm.year+'-'+pad(cm.month+1)+'-'+pad(day);
     const isToday = dIso === todayIso;
     const isFuture = parseISO(dIso) > parseISO(todayIso);
+    const isSelected = dIso === selected;
     const log = state.logs[dIso];
     const cls = ['cal-day'];
     if(isFuture) cls.push('future');
@@ -2188,6 +3213,7 @@ function renderSemana(){
     if(log && log.done) cls.push('done');
     if(log && log.skipped && !log.done) cls.push('skipped');
     if(isRestDay(dIso) && !(log && log.done)) cls.push('rest');
+    if(isSelected) cls.push('selected');
     cells += `<div class="${cls.join(' ')}" data-iso="${dIso}">${day}</div>`;
   }
 
@@ -2201,6 +3227,7 @@ function renderSemana(){
         </div>
       </div>
       <div class="cal-grid">${cells}</div>
+      ${renderDayDetail(selected)}
     </div>
   </section>`;
 
@@ -2240,12 +3267,105 @@ function renderSemana(){
     if(cm.month>11){cm.month=0;cm.year++;}
     renderSemana();
   };
+  // Tap on a calendar day → select it (show detail below)
   document.querySelectorAll('.cal-day:not(.empty)').forEach(el=>{
     el.addEventListener('click', ()=>{
-      state.selectedDate = el.dataset.iso;
-      setTab('hoy');
+      state.calSelectedDay = el.dataset.iso;
+      renderSemana();
     });
   });
+  // CTA button: jump to "Hoy" with that date
+  const ctaBtn = document.getElementById('ddCta');
+  if(ctaBtn){
+    ctaBtn.addEventListener('click', ()=>{
+      state.selectedDate = ctaBtn.dataset.iso;
+      setTab('hoy');
+    });
+  }
+}
+
+/**
+ * Renders the inline detail card for a selected calendar day.
+ */
+function renderDayDetail(iso){
+  const d = parseISO(iso);
+  const todayIso = todayISO();
+  const isToday = iso === todayIso;
+  const isPast = parseISO(iso) < parseISO(todayIso);
+  const isFuture = parseISO(iso) > parseISO(todayIso);
+  const log = state.logs[iso] || {};
+  const sessionInfo = getSessionForDate(iso);
+  const session = sessionInfo.session;
+  const isRest = sessionInfo.isRest;
+  const week = weekNumber(iso);
+  const phase = phaseFor(week);
+
+  // Date label
+  const dateLabel = `${DOW_FULL[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+  let context;
+  if(isToday) context = `Hoy · sem ${week} · ${phase}`;
+  else if(isPast) context = `Sem ${week} · ${phase}`;
+  else context = `Próximamente · sem ${week} · ${phase}`;
+
+  // Status pill
+  let statusPill = '';
+  if(log.done) statusPill = '<div class="dd-status done">✓ Hecha</div>';
+  else if(log.skipped) statusPill = '<div class="dd-status skipped">No realizada</div>';
+  else if(isRest) statusPill = '<div class="dd-status rest-pill">Descanso</div>';
+
+  let cardCls = 'day-detail';
+  if(isToday && !isRest) cardCls += ' today';
+  if(isRest) cardCls += ' rest-day';
+
+  // Color stripe (only for non-today, non-rest sessions — adds visual identity)
+  const showStripe = session && !isToday && !isRest;
+  const stripeColor = session ? getSessionColor(sessionInfo.sessionIdx) : null;
+  const stripeHTML = showStripe ? `<div class="dd-stripe" style="background:${stripeColor};"></div>` : '';
+
+  // Build inner content
+  let inner = stripeHTML + `<div class="dd-head">
+      <div>
+        <div class="dd-date">${dateLabel}</div>
+        <div class="dd-context">${context}</div>
+      </div>
+      ${statusPill}
+    </div>`;
+
+  if(isRest){
+    inner += `<div class="dd-rest-explain">
+      <p style="margin-bottom:8px;">🛌 <strong>Día de descanso programado.</strong></p>
+      <p>${week <= 3
+        ? 'En las primeras 3 semanas, los días de descanso protegen tus tendones del manguito rotador mientras tu cuerpo se reacostumbra al agua.'
+        : 'Día libre — disfruta.'}</p>
+    </div>`;
+  } else if(session){
+    const blocksHTML = session.blocks.map(b =>
+      `<div class="dd-block-row">
+        <span class="dd-block-name">${b.name}</span>
+        <span class="dd-block-dist">${b.dist} m</span>
+      </div>`
+    ).join('');
+
+    const nameParts = session.name.split(' ');
+    const firstWord = nameParts[0];
+    const rest = nameParts.slice(1).join(' ');
+
+    inner += `<div class="dd-session-name">${firstWord}${rest ? ` <em>${rest}</em>` : ''}</div>
+      <div class="dd-stroke">${session.stroke}</div>
+      <div class="dd-stats">
+        <div class="dd-stat"><div class="v">${session.total}<span style="font-size:12px;opacity:0.7;"> m</span></div><div class="l">Distancia</div></div>
+        <div class="dd-stat"><div class="v">${session.blocks.length}</div><div class="l">Bloques</div></div>
+        ${log.done && log.distance ? `<div class="dd-stat"><div class="v" style="color:var(--coral);">${log.distance}<span style="font-size:12px;opacity:0.7;"> m</span></div><div class="l">Real</div></div>` : ''}
+      </div>
+      <div class="dd-blocks">${blocksHTML}</div>
+      ${log.notes ? `<div class="dd-notes">"${escapeHtml(log.notes)}"</div>` : ''}
+      ${(isToday || isFuture) && !log.done ? `<button class="dd-cta" id="ddCta" data-iso="${iso}">${isToday ? 'Ir a la sesión' : 'Ver detalle completo'}</button>` : ''}
+      ${isPast && !log.done && !log.skipped ? `<button class="dd-cta" id="ddCta" data-iso="${iso}">Registrar este día</button>` : ''}`;
+  } else {
+    inner += `<div class="dd-rest-explain"><p>Sin sesión planificada para este día.</p></div>`;
+  }
+
+  return `<div class="${cardCls}">${inner}</div>`;
 }
 
 /* --------- TAB: HISTORIAL --------- */
@@ -2270,8 +3390,9 @@ function renderHistorial(){
       // Use stored sessionIdx (what was actually done) with fallback to day-of-week
       const sIdx = log.sessionIdx || dayOfWeekMonFirst(d);
       const session = PLAN.sessions[sIdx] || PLAN.sessions[dayOfWeekMonFirst(d)];
+      const stripeColor = getSessionColor(sIdx);
       if(log.skipped && !log.done){
-        html += `<div class="log-item">
+        html += `<div class="log-item" style="--stripe-color:${stripeColor};opacity:0.6;">
           <div class="log-row">
             <div class="log-date">${fmtDateShort(iso)}</div>
             <div class="log-meta" style="color:var(--coral);">No realizada</div>
@@ -2279,7 +3400,7 @@ function renderHistorial(){
           <div class="muted" style="font-size:12px;">${session.name}</div>
         </div>`;
       } else {
-        html += `<div class="log-item">
+        html += `<div class="log-item" style="--stripe-color:${stripeColor};">
           <div class="log-row">
             <div class="log-date">${fmtDateShort(iso)}</div>
             <div class="log-meta">
@@ -2333,7 +3454,66 @@ function renderProgreso(){
   const phaseObj = PLAN.phases.find(p=>p.weeks.includes(week)) || PLAN.phases[PLAN.phases.length-1];
   const phaseProgress = ((week - phaseObj.weeks[0]) / phaseObj.weeks.length) * 100;
 
+  // === Progress rings data ===
+  // Outer ring: today's session blocks completion (% of blocks done)
+  const todayLog = state.logs[td] || {};
+  const todaySessionInfo = getSessionForDate(td);
+  const todaySession = todaySessionInfo.session;
+  const todayBlocksDone = (todayLog.blocksDone || []).length;
+  const todayBlocksTotal = todaySession ? todaySession.blocks.length : 0;
+  const ringTodayPct = todaySession
+    ? (todayLog.done ? 100 : (todayBlocksTotal > 0 ? (todayBlocksDone / todayBlocksTotal) * 100 : 0))
+    : (todaySessionInfo.isRest ? 100 : 0);
+
+  // Middle ring: this week's sessions completed (out of planned)
+  const monIso = getMondayOf(td);
+  let weekDone = 0, weekPlanned = 0;
+  for(let i = 0; i < 7; i++){
+    const dd = new Date(parseISO(monIso)); dd.setDate(dd.getDate()+i);
+    const ddIso = isoOf(dd);
+    const info = getSessionForDate(ddIso);
+    if(info.session){
+      weekPlanned++;
+      const log = state.logs[ddIso];
+      if(log && log.done) weekDone++;
+    }
+  }
+  const ringWeekPct = weekPlanned > 0 ? (weekDone / weekPlanned) * 100 : 0;
+
+  // Inner ring: phase progress
+  const ringPhasePct = Math.min(100, Math.max(0, phaseProgress));
+
+  // Build SVG rings (3 concentric)
+  const ringsSVG = buildProgressRings({
+    today: ringTodayPct,
+    week: ringWeekPct,
+    phase: ringPhasePct
+  });
+
   let html = `<section class="section">
+    <div class="rings-card">
+      <div class="rings-svg-wrap">${ringsSVG}</div>
+      <div class="rings-legend">
+        <div class="ring-legend-item">
+          <span class="ring-dot" style="background:var(--coral);"></span>
+          <span class="ring-label">Hoy</span>
+          <span class="ring-val">${Math.round(ringTodayPct)}%</span>
+        </div>
+        <div class="ring-legend-item">
+          <span class="ring-dot" style="background:var(--gold);"></span>
+          <span class="ring-label">Semana</span>
+          <span class="ring-val">${weekDone}/${weekPlanned}</span>
+        </div>
+        <div class="ring-legend-item">
+          <span class="ring-dot" style="background:var(--tide);"></span>
+          <span class="ring-label">Fase</span>
+          <span class="ring-val">sem ${week-phaseObj.weeks[0]+1}/${phaseObj.weeks.length}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
     <h3 class="section-title">Tu progreso</h3>
 
     <div class="stat-grid">
@@ -2347,13 +3527,13 @@ function renderProgreso(){
       </div>
       <div class="stat-card flame">
         <div class="stat-label">Racha</div>
-        <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+        <div class="stat-value"><span data-animate-num="${calcStreak()}">${calcStreak()}</span><span class="unit">días</span></div>
         <div class="stat-sub">Días seguidos cumpliendo</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Total nadado</div>
-        <div class="stat-value">${(total/1000).toFixed(1)}<span class="unit">km</span></div>
-        <div class="stat-sub">${sessions} sesiones</div>
+        <div class="stat-value"><span data-animate-num="${(total/1000).toFixed(1)}">${(total/1000).toFixed(1)}</span><span class="unit">km</span></div>
+        <div class="stat-sub"><span data-animate-num="${sessions}">${sessions}</span> sesiones</div>
       </div>
     </div>
   </section>
@@ -2381,6 +3561,105 @@ function renderProgreso(){
   </section>`;
 
   $content.innerHTML = html;
+
+  // Animate the rings on load
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.ring-progress').forEach(el => {
+      const target = parseFloat(el.dataset.target) || 0;
+      const circumference = parseFloat(el.dataset.circumference);
+      const offset = circumference - (target / 100) * circumference;
+      // Trigger transition
+      el.style.strokeDashoffset = offset;
+    });
+  });
+}
+
+/**
+ * Animates all elements with [data-animate-num] from 0 to their final value.
+ * Reads the final value from the element's text content, replaces it with 0,
+ * then counts up smoothly using requestAnimationFrame.
+ *
+ * Format support:
+ *   - Plain integers: "42" → counts up to 42
+ *   - Decimals (1 place): "1.2" → counts up to 1.2
+ *   - With prefix/suffix preserved by reading data-prefix/data-suffix or
+ *     by being placed inside an element where surrounding text stays fixed
+ */
+function animateNumbers(){
+  const els = document.querySelectorAll('[data-animate-num]');
+  els.forEach(el => {
+    const finalText = el.dataset.animateNum;
+    const finalNum = parseFloat(finalText);
+    if(isNaN(finalNum)) return;
+    const isDecimal = finalText.includes('.');
+    const decimals = isDecimal ? (finalText.split('.')[1] || '').length : 0;
+    const duration = 900; // ms
+    const start = performance.now();
+    el.textContent = isDecimal ? '0.0' : '0';
+    function step(now){
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / duration);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = finalNum * eased;
+      el.textContent = current.toFixed(decimals);
+      if(t < 1) requestAnimationFrame(step);
+      else el.textContent = finalText; // exact final value
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/**
+ * Builds 3-concentric ring SVG (Apple Fitness inspired but with our palette).
+ * Outer = coral (today), Middle = gold (week), Inner = tide (phase).
+ */
+function buildProgressRings({ today, week, phase }){
+  // Sizes: outer ring r=88, middle r=68, inner r=48 (stroke-width=14, gap=2)
+  const cx = 110, cy = 110;
+  const stroke = 14;
+  const r1 = 88, r2 = 68, r3 = 48;
+  const c1 = 2 * Math.PI * r1;
+  const c2 = 2 * Math.PI * r2;
+  const c3 = 2 * Math.PI * r3;
+
+  return `
+    <svg class="rings-svg" viewBox="0 0 220 220" width="220" height="220">
+      <defs>
+        <linearGradient id="ringCoral" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ff8a6b"/>
+          <stop offset="100%" stop-color="#e87559"/>
+        </linearGradient>
+        <linearGradient id="ringGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#e8c068"/>
+          <stop offset="100%" stop-color="#d4a74a"/>
+        </linearGradient>
+        <linearGradient id="ringTide" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5fa4b5"/>
+          <stop offset="100%" stop-color="#0e5b6f"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Background tracks -->
+      <circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="var(--line-soft)" stroke-width="${stroke}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="var(--line-soft)" stroke-width="${stroke}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r3}" fill="none" stroke="var(--line-soft)" stroke-width="${stroke}"/>
+
+      <!-- Progress rings (start at 0, animated to target via JS) -->
+      <circle class="ring-progress" cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="url(#ringCoral)" stroke-width="${stroke}" stroke-linecap="round"
+              transform="rotate(-90 ${cx} ${cy})"
+              stroke-dasharray="${c1.toFixed(2)}" stroke-dashoffset="${c1.toFixed(2)}"
+              data-target="${today.toFixed(1)}" data-circumference="${c1.toFixed(2)}"/>
+      <circle class="ring-progress" cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="url(#ringGold)" stroke-width="${stroke}" stroke-linecap="round"
+              transform="rotate(-90 ${cx} ${cy})"
+              stroke-dasharray="${c2.toFixed(2)}" stroke-dashoffset="${c2.toFixed(2)}"
+              data-target="${week.toFixed(1)}" data-circumference="${c2.toFixed(2)}"/>
+      <circle class="ring-progress" cx="${cx}" cy="${cy}" r="${r3}" fill="none" stroke="url(#ringTide)" stroke-width="${stroke}" stroke-linecap="round"
+              transform="rotate(-90 ${cx} ${cy})"
+              stroke-dasharray="${c3.toFixed(2)}" stroke-dashoffset="${c3.toFixed(2)}"
+              data-target="${phase.toFixed(1)}" data-circumference="${c3.toFixed(2)}"/>
+    </svg>
+  `;
 }
 function nextMilestone(total){
   const mil = [5000,10000,25000,50000,100000];
@@ -2657,20 +3936,20 @@ function openManualModal(){
         <div class="field">
           <label>Fecha</label>
           <input type="date" id="mDate" value="${todayIso}" max="${todayIso}"
-            style="width:100%;background:white;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--ink);">
+            style="width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--ink);">
         </div>
 
         <div class="field">
           <label>Tu tiempo de 400 m</label>
           <div style="display:flex;gap:8px;align-items:center;">
             <input type="number" id="mMin" inputmode="numeric" placeholder="MM" min="0" max="59" maxlength="2"
-              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
             <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">:</span>
             <input type="number" id="mSec" inputmode="numeric" placeholder="SS" min="0" max="59" maxlength="2"
-              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
             <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">.</span>
             <input type="number" id="mCs" inputmode="numeric" placeholder="CC" min="0" max="99" maxlength="2"
-              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
           </div>
           <p class="muted" style="font-size:12px;margin-top:8px;">Min : Seg . Centésimas (centésimas opcional)</p>
         </div>
@@ -2791,12 +4070,68 @@ function render(){
     case 'seco': renderSeco(); break;
     case 'cronometro': renderCronometro(); break;
   }
+  // Animate numeric values after the DOM is in place
+  requestAnimationFrame(() => animateNumbers());
+}
+
+/* --------- WELCOME SCREEN (first run) --------- */
+function showWelcomeScreen(){
+  return new Promise(resolve => {
+    const html = `
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-glow tl"></div>
+        <div class="welcome-glow br"></div>
+        <svg class="welcome-waves" viewBox="0 0 400 800" preserveAspectRatio="none">
+          <path d="M 0 400 Q 100 380 200 400 T 400 400 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.5"/>
+          <path d="M 0 460 Q 100 440 200 460 T 400 460 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.4"/>
+          <path d="M 0 520 Q 100 500 200 520 T 400 520 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.3"/>
+        </svg>
+
+        <div class="welcome-top">
+          <div class="welcome-mark">Brazada<span class="dot">.</span></div>
+        </div>
+
+        <div class="welcome-center">
+          <div class="welcome-title">Brazada<span class="dot">.</span></div>
+          <div class="welcome-divider"></div>
+          <div class="welcome-tagline">tu diario personal<br>de natación</div>
+        </div>
+
+        <div class="welcome-bottom">
+          <button class="welcome-cta" id="welcomeStart">Empezar el plan</button>
+          <div class="welcome-meta">12 semanas · adaptación → definición</div>
+        </div>
+      </div>
+    `;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    document.body.appendChild(wrapper.firstElementChild);
+
+    document.getElementById('welcomeStart').addEventListener('click', () => {
+      const el = document.getElementById('welcomeScreen');
+      el.classList.add('exiting');
+      try{ localStorage.setItem('brazada_welcomed', '1'); }catch(e){}
+      setTimeout(() => {
+        el.remove();
+        resolve();
+      }, 400);
+    });
+  });
 }
 
 /* --------- INIT --------- */
 (async ()=>{
   await loadState();
-  render();
+
+  // First run: show welcome screen
+  let welcomed = null;
+  try{ welcomed = localStorage.getItem('brazada_welcomed'); }catch(e){}
+  if(!welcomed){
+    render();
+    await showWelcomeScreen();
+  } else {
+    render();
+  }
 })();
 
 /* --------- SERVICE WORKER (offline support) --------- */
