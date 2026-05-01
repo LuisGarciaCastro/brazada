@@ -115,6 +115,23 @@ body{
   background:var(--abyss);
   color:var(--bone);
 }
+.tab{
+  position:relative;
+}
+.tab .dot{
+  display:inline-block;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--coral);
+  margin-left:5px;
+  vertical-align:middle;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%, 100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(0.85); }
+}
 
 /* ---------- HERO TODAY ---------- */
 .hero{
@@ -530,6 +547,20 @@ body{
 .cal-day.skipped{
   color:var(--muted);
   text-decoration:line-through;
+}
+.cal-day.rest:not(.today):not(.done){
+  color:var(--muted);
+  opacity:0.4;
+  font-size:10px;
+}
+.cal-day.rest:not(.today):not(.done)::after{
+  content:'';
+  position:absolute;
+  bottom:6px;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:var(--muted);
 }
 
 /* ---------- LOG LIST ---------- */
@@ -957,6 +988,23 @@ body{
   color:var(--coral);
   margin-left:2px;
 }
+.day-pick.rest{
+  background:transparent;
+  border:1.5px dashed var(--line);
+  opacity:0.55;
+}
+.day-pick.rest .dp-num{
+  font-size:14px;
+  color:var(--muted);
+}
+.day-pick.rest.active{
+  background:var(--abyss);
+  border-color:var(--abyss);
+  border-style:solid;
+  color:var(--bone);
+  opacity:1;
+}
+.day-pick.rest.active .dp-num{color:var(--bone);}
 
 /* small text helper */
 .muted{color:var(--muted);font-size:13px;}
@@ -1004,24 +1052,24 @@ const PLAN = {
     1: { // Lunes
       name: "Técnica + suave",
       stroke: "Crol",
-      total: 900,
+      total: 700,
       blocks: [
-        { name: "Calentamiento", dist: 200, desc:
+        { name: "Calentamiento", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de la piscina (200 m): 2 a crol y 2 a espalda, alternando. Despacio, sin forzar.</p>
+           <p>3 largos suaves (150 m): alterna crol y espalda. Despacio, sin forzar.</p>
            <strong>Cómo</strong>
            <p>Respira cuando quieras. El objetivo no es ir rápido, es soltar hombros y meterte en el agua.</p>
            <div class="tip"><span class="tip-label">Recuerda</span> · si te falta el aire, vas demasiado rápido. Baja el ritmo.</div>` },
-        { name: "Técnica – brazada larga", dist: 200, desc:
+        { name: "Técnica – brazada larga", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 series de 50 m (1 largo de ida + 1 de vuelta). En la <b>ida</b>, "punto muerto". En la <b>vuelta</b>, crol normal.</p>
+           <p>3 series de 50 m. En la <b>ida</b>, "punto muerto". En la <b>vuelta</b>, crol normal.</p>
            <strong>El "punto muerto" paso a paso</strong>
            <p>1. Estira un brazo delante (como si quisieras tocar la pared opuesta).<br>
               2. Ese brazo se queda quieto, esperando.<br>
               3. El otro brazo da una brazada completa hasta tocar al primero.<br>
               4. Cuando se tocan, el que estaba quieto empieza a tirar. Y así.</p>
            <strong>Descanso</strong>
-           <p>20 segundos en la pared entre cada serie de 50 m.</p>
+           <p>25 segundos en la pared entre cada 50 m.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · te obliga a "alargar" la brazada en vez de mover los brazos rápido. Es la base de nadar bien.</div>` },
         { name: "Principal – crol cómodo", dist: 300, desc:
           `<strong>Qué haces</strong>
@@ -1029,10 +1077,10 @@ const PLAN = {
            <strong>Foco</strong>
            <p>Alarga cada brazada. Mejor pocas brazadas largas que muchas cortas y rápidas.</p>
            <strong>Descanso</strong>
-           <p>15 segundos en la pared entre cada 50 m.</p>` },
-        { name: "Vuelta a la calma", dist: 200, desc:
+           <p>20 segundos en la pared entre cada 50 m. Si lo necesitas, 25-30.</p>` },
+        { name: "Vuelta a la calma", dist: 100, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos suaves (200 m). 2 a espalda + 2 a crol respirando cada 3 brazadas.</p>
+           <p>2 largos suaves (100 m): 1 a espalda + 1 a crol respirando cada 3 brazadas.</p>
            <strong>Respirar cada 3 brazadas</strong>
            <p>En crol, en lugar de respirar siempre por el mismo lado, cuentas: brazada-1, brazada-2, respiras al lado derecho, brazada-1, brazada-2, respiras al lado izquierdo. Y así.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · respirar siempre por el mismo lado descompensa hombros y cuello. Esto los iguala.</div>` },
@@ -1041,11 +1089,11 @@ const PLAN = {
     2: { // Martes
       name: "Series cortas",
       stroke: "Crol",
-      total: 900,
+      total: 700,
       blocks: [
-        { name: "Calentamiento", dist: 200, desc:
+        { name: "Calentamiento", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos suaves (200 m), alternando crol y espalda.</p>
+           <p>3 largos suaves (150 m), alternando crol y espalda.</p>
            <strong>Cómo</strong>
            <p>Pulso bajo, respiración cómoda. Estás preparando el cuerpo, no compitiendo.</p>` },
         { name: "Activación", dist: 100, desc:
@@ -1057,19 +1105,19 @@ const PLAN = {
               3º: rápido.<br>
               4º: casi al máximo.</p>
            <strong>Descanso</strong>
-           <p>20 segundos en la pared entre cada uno.</p>
+           <p>25 segundos en la pared entre cada uno.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · prepara el cuerpo para la parte intensa que viene.</div>` },
-        { name: "Principal – series intensas", dist: 400, desc:
+        { name: "Principal – series intensas", dist: 300, desc:
           `<strong>Qué haces</strong>
-           <p>8 largos de 50 m a crol, a ritmo <b>fuerte</b>.</p>
+           <p>6 largos de 50 m a crol, a ritmo <b>fuerte</b>.</p>
            <strong>Qué significa "fuerte"</strong>
-           <p>Aproximadamente al 80% de tu máximo. Acabas el largo respirando bastante, pero no completamente reventado. Si pudieras aguantar más de 100 m así, te falta intensidad.</p>
+           <p>Aproximadamente al 80% de tu máximo. Acabas el largo respirando bastante, pero no completamente reventado.</p>
            <strong>Descanso</strong>
-           <p>30 segundos en la pared entre cada 50 m. Aprovecha para recuperar la respiración.</p>
-           <div class="tip"><span class="tip-label">Aviso</span> · si te quedas sin aire a la mitad, baja un poco el ritmo. Mejor 8 largos sostenidos que 3 a tope y morir.</div>` },
-        { name: "Vuelta a la calma", dist: 200, desc:
+           <p>30-40 segundos en la pared entre cada 50 m. Aprovecha bien para recuperar.</p>
+           <div class="tip"><span class="tip-label">Aviso</span> · si te quedas sin aire a la mitad, baja un poco el ritmo. Mejor 6 largos sostenidos que 3 a tope y morir.</div>` },
+        { name: "Vuelta a la calma", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos muy suaves (200 m). 2 a espalda + 2 a crol.</p>
+           <p>3 largos muy suaves (150 m): alternando espalda y crol.</p>
            <strong>Cómo</strong>
            <p>Lentísimo. Esto baja el pulso y evita que salgas mareado de la piscina.</p>` },
       ]
@@ -1077,23 +1125,23 @@ const PLAN = {
     3: { // Miércoles
       name: "Espalda y postura",
       stroke: "Espalda",
-      total: 900,
+      total: 750,
       blocks: [
-        { name: "Calentamiento", dist: 200, desc:
+        { name: "Calentamiento", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos (200 m) alternando: 1 crol + 1 espalda + 1 crol + 1 espalda. Suave.</p>
+           <p>3 largos suaves (150 m): alternando crol y espalda.</p>
            <strong>Cómo</strong>
            <p>En la espalda, túmbate bien plano, mirada al techo, sin levantar la cabeza.</p>` },
-        { name: "Drills – espalda con un brazo", dist: 200, desc:
+        { name: "Drills – espalda con un brazo", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 series de 50 m. En la <b>ida</b>, espalda con un solo brazo. En la <b>vuelta</b>, espalda normal.</p>
+           <p>3 series de 50 m. En la <b>ida</b>, espalda con un solo brazo. En la <b>vuelta</b>, espalda normal.</p>
            <strong>Espalda con un brazo paso a paso</strong>
            <p>1. Túmbate boca arriba en el agua.<br>
               2. Un brazo pegado al costado, sin moverlo.<br>
               3. El otro brazo hace todo el trabajo: sale del agua, va por encima, entra detrás de la cabeza, tira.<br>
               4. Haz 25 m con un brazo, da la vuelta y haz los siguientes 25 m con el otro brazo.</p>
            <strong>Descanso</strong>
-           <p>20 segundos entre cada 50 m.</p>
+           <p>25 segundos entre cada 50 m.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · obliga a cada lado del cuerpo a trabajar por separado. Iguala asimetrías y abre el pecho — clave para tu postura.</div>` },
         { name: "Principal – espalda continua", dist: 300, desc:
           `<strong>Qué haces</strong>
@@ -1105,9 +1153,9 @@ const PLAN = {
            <strong>Descanso</strong>
            <p>20 segundos entre cada 50 m.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · la espalda es el estilo postural por excelencia. Abre pecho, activa la musculatura entre los omoplatos y compensa el "encorvamiento" de oficina/móvil.</div>` },
-        { name: "Vuelta a la calma", dist: 200, desc:
+        { name: "Vuelta a la calma", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de crol muy suaves, respirando cada 3 brazadas (alternando lados).</p>
+           <p>3 largos de crol suaves, respirando cada 3 brazadas (alternando lados).</p>
            <strong>Recordatorio</strong>
            <p>Brazada-1, brazada-2, respiro derecha. Brazada-1, brazada-2, respiro izquierda. Y así.</p>` },
       ]
@@ -1115,16 +1163,16 @@ const PLAN = {
     4: { // Jueves
       name: "Pull / brazos",
       stroke: "Crol con pull-buoy",
-      total: 1000,
+      total: 750,
       blocks: [
-        { name: "Calentamiento", dist: 200, desc:
+        { name: "Calentamiento", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de crol normal, suave. Sin pull-buoy todavía.</p>
+           <p>3 largos de crol normal, suave. Sin pull-buoy todavía.</p>
            <strong>Antes de empezar</strong>
            <p>Si no sabes qué es el pull-buoy: es ese cacharro de espuma con forma de "8" que se aprieta entre los muslos. Lo encuentras gratis en cualquier piscina (en el cesto del material).</p>` },
-        { name: "Pull suave – con pull-buoy", dist: 300, desc:
+        { name: "Pull suave – con pull-buoy", dist: 200, desc:
           `<strong>Qué haces</strong>
-           <p>6 largos de 50 m a crol, con el pull-buoy entre los muslos. Ritmo cómodo.</p>
+           <p>4 largos de 50 m a crol, con el pull-buoy entre los muslos. Ritmo cómodo.</p>
            <strong>Cómo se usa el pull-buoy</strong>
            <p>1. Lo aprietas entre los muslos (no entre las rodillas, demasiado abajo no aguanta).<br>
               2. Hace flotar las piernas → tú no pateas, dejas las piernas quietas.<br>
@@ -1134,16 +1182,16 @@ const PLAN = {
            <strong>Descanso</strong>
            <p>25 segundos entre cada 50 m.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · al anular las piernas, todo el esfuerzo recae en brazos, hombros y espalda. Es la sesión que más te va a marcar el tren superior.</div>` },
-        { name: "Pull intenso – con pull-buoy", dist: 200, desc:
+        { name: "Pull intenso – con pull-buoy", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de 50 m a crol con pull-buoy, esta vez a ritmo <b>fuerte</b>.</p>
+           <p>3 largos de 50 m a crol con pull-buoy, esta vez a ritmo <b>fuerte</b>.</p>
            <strong>Ritmo</strong>
            <p>Como las series del martes (~80% de tu máximo). Llegas al final del largo respirando bastante.</p>
            <strong>Descanso</strong>
-           <p>30 segundos entre cada 50 m.</p>` },
-        { name: "Espalda suave", dist: 200, desc:
+           <p>35-40 segundos entre cada 50 m.</p>` },
+        { name: "Espalda suave", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de espalda normal, muy suaves. Sin pull-buoy.</p>
+           <p>3 largos de espalda normal, muy suaves. Sin pull-buoy.</p>
            <strong>Por qué este bloque</strong>
            <p>Los hombros han trabajado muchísimo en el pull. La espalda hace el movimiento opuesto y los descomprime, evitando que mañana te duelan.</p>
            <div class="tip"><span class="tip-label">Importante</span> · no te lo saltes. Los hombros de nadador (lesión típica) vienen de no descompensar.</div>` },
@@ -1155,11 +1203,11 @@ const PLAN = {
     5: { // Viernes
       name: "Patada / piernas",
       stroke: "Patada con tabla",
-      total: 800,
+      total: 650,
       blocks: [
-        { name: "Calentamiento", dist: 200, desc:
+        { name: "Calentamiento", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de crol suave para entrar en calor.</p>
+           <p>3 largos de crol suave para entrar en calor.</p>
            <strong>Antes de empezar</strong>
            <p>Coge la tabla del cesto del material (es un rectángulo plano de espuma).</p>` },
         { name: "Patada de crol con tabla", dist: 200, desc:
@@ -1171,100 +1219,97 @@ const PLAN = {
               3. Patada de crol: piernas casi rectas, el movimiento sale de la cadera, no de la rodilla.<br>
               4. Pies relajados, casi como si arrastraras los dedos por la superficie.</p>
            <strong>Descanso</strong>
-           <p>25 segundos entre cada 25 m.</p>
-           <div class="tip"><span class="tip-label">Aviso</span> · vas a notar que el pulso sube muchísimo. Es normal, las piernas son los músculos más grandes y queman energía como locos. Por eso este día es exigente cardiovascularmente.</div>` },
-        { name: "Patada de espalda", dist: 200, desc:
+           <p>25-30 segundos entre cada 25 m.</p>
+           <div class="tip"><span class="tip-label">Aviso</span> · vas a notar que el pulso sube muchísimo. Es normal, las piernas son los músculos más grandes y queman energía como locos.</div>` },
+        { name: "Patada de espalda", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de 50 m, pateando boca arriba sin tabla.</p>
+           <p>3 largos de 50 m, pateando boca arriba sin tabla.</p>
            <strong>Cómo</strong>
            <p>1. Túmbate de espaldas, mirada al techo.<br>
               2. Brazos pegados al costado, sin moverlos (también puedes estirarlos por encima de la cabeza, juntos, si te resulta más cómodo).<br>
               3. Patada continua, igual que la de crol pero al revés.</p>
            <strong>Descanso</strong>
-           <p>30 segundos entre cada 50 m.</p>
+           <p>35 segundos entre cada 50 m.</p>
            <div class="tip"><span class="tip-label">Si te hundes</span> · saca un poco más la cadera. Pecho arriba, ombligo arriba.</div>` },
-        { name: "Vuelta a la calma", dist: 200, desc:
+        { name: "Vuelta a la calma", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de crol completo (con brazos y piernas), muy suaves.</p>` },
+           <p>3 largos de crol completo (con brazos y piernas), muy suaves.</p>` },
       ]
     },
     6: { // Sábado
       name: "Aeróbico continuo + técnica",
       stroke: "Crol",
-      total: 1800,
+      total: 1200,
       blocks: [
-        { name: "Calentamiento", dist: 400, desc:
+        { name: "Calentamiento", dist: 250, desc:
           `<strong>Qué haces</strong>
-           <p>8 largos suaves (400 m), alternando crol y espalda cada 50 m.</p>
+           <p>5 largos suaves (250 m), alternando crol y espalda cada 50 m.</p>
            <strong>Cómo</strong>
            <p>Es un calentamiento más largo porque la sesión principal es exigente. Tómatelo en serio.</p>` },
-        { name: "Técnica – mezcla de drills", dist: 300, desc:
+        { name: "Técnica – mezcla de drills", dist: 200, desc:
           `<strong>Qué haces</strong>
-           <p>6 largos de 50 m, alternando los drills que ya conoces:</p>
-           <p>• Largo 1: punto muerto (lunes)<br>
+           <p>4 largos de 50 m, alternando los drills que ya conoces:</p>
+           <p>• Largo 1: punto muerto<br>
               • Largo 2: respirando cada 5 brazadas en crol<br>
               • Largo 3: punto muerto<br>
-              • Largo 4: respirando cada 5<br>
-              • Largo 5: punto muerto<br>
-              • Largo 6: respirando cada 5</p>
+              • Largo 4: respirando cada 5</p>
            <strong>"Respirar cada 5"</strong>
            <p>Da 4 brazadas seguidas sin respirar y respira en la 5ª. Trabaja capacidad pulmonar.</p>
            <strong>Descanso</strong>
-           <p>20 segundos entre cada 50 m.</p>` },
-        { name: "Principal – continuo", dist: 800, desc:
+           <p>25 segundos entre cada 50 m.</p>` },
+        { name: "Principal – continuo", dist: 600, desc:
           `<strong>Qué haces</strong>
-           <p>2 bloques de 400 m a crol seguidos (16 largos cada bloque), a ritmo cómodo y constante.</p>
+           <p>2 bloques de 300 m a crol seguidos (12 largos cada bloque), a ritmo cómodo y constante.</p>
            <strong>Cómo</strong>
-           <p>El reto NO es ir rápido. Es nadar 400 m sin parar manteniendo el mismo ritmo de principio a fin. Encuentra una velocidad sostenible.</p>
+           <p>El reto NO es ir rápido. Es nadar 300 m sin parar manteniendo el mismo ritmo de principio a fin. Encuentra una velocidad sostenible.</p>
            <strong>Descanso</strong>
            <p>1 minuto en la pared entre los dos bloques.</p>
-           <div class="tip"><span class="tip-label">Si te cuesta</span> · en lugar de 2×400, hazlo como 4×200 m con 30 segundos de descanso entre cada uno. Es totalmente válido y vas progresando hacia el continuo.</div>` },
-        { name: "Vuelta a la calma", dist: 300, desc:
+           <div class="tip"><span class="tip-label">Si te cuesta el continuo</span> · en lugar de 2×300, hazlo como 4×150 m con 30 segundos de descanso entre cada uno. Es totalmente válido y vas progresando hacia el continuo.</div>` },
+        { name: "Vuelta a la calma", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>6 largos muy suaves (300 m): 3 a espalda + 3 a crol.</p>
-           <strong>Por qué tan larga</strong>
-           <p>Has nadado 1.500 m antes de esto. Necesitas una bajada de pulso real para no salir mareado.</p>` },
+           <p>3 largos muy suaves (150 m): alternando espalda y crol.</p>
+           <strong>Por qué importa</strong>
+           <p>Has nadado 1.050 m antes de esto. Necesitas una bajada de pulso real para no salir mareado.</p>` },
       ]
     },
     7: { // Domingo
       name: "Sesión variada",
       stroke: "Todos los estilos",
-      total: 1800,
+      total: 1200,
       blocks: [
-        { name: "Calentamiento", dist: 400, desc:
+        { name: "Calentamiento", dist: 250, desc:
           `<strong>Qué haces</strong>
-           <p>8 largos suaves (400 m), alternando crol y espalda.</p>` },
-        { name: "Pirámide", dist: 800, desc:
+           <p>5 largos suaves (250 m), alternando crol y espalda.</p>` },
+        { name: "Pirámide", dist: 500, desc:
           `<strong>Qué haces</strong>
            <p>Una "pirámide": vas subiendo distancia, llegas al pico, y vuelves a bajar.</p>
            <p>• 50 m crol<br>
               • 100 m crol<br>
-              • 150 m crol<br>
-              • 200 m crol ← pico<br>
-              • 150 m crol<br>
+              • 150 m crol ← pico<br>
               • 100 m crol<br>
+              • 50 m crol<br>
               • 50 m crol</p>
            <strong>Ritmo</strong>
            <p>Medio. Ni suave ni fuerte. Cómodo pero con intención.</p>
            <strong>Descanso</strong>
-           <p>20 segundos entre los tramos cortos (50, 100), 30 segundos entre los largos (150, 200).</p>
+           <p>25-30 segundos entre cada tramo.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · la pirámide entrena resistencia mental y física. Cuando ya estás cansado y aún quedan tramos, aprendes a dosificar.</div>` },
-        { name: "Otros estilos", dist: 200, desc:
+        { name: "Otros estilos", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 series de 50 m. En cada una: 25 m a braza + 25 m a espalda.</p>
+           <p>3 series de 50 m. En cada una: 25 m a braza + 25 m a espalda.</p>
            <strong>La braza</strong>
            <p>Si recuerdas hacerla, perfecto. Si no, brazada en círculo desde delante hacia los lados, y patada de rana (rodillas se separan, talones al culo, golpe hacia fuera).</p>
            <strong>Descanso</strong>
-           <p>20 segundos entre series.</p>
+           <p>25 segundos entre series.</p>
            <div class="tip"><span class="tip-label">Por qué</span> · variar estilos trabaja músculos que el crol no toca y rompe la monotonía.</div>` },
-        { name: "Pull final", dist: 200, desc:
+        { name: "Pull final", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de 50 m a crol con pull-buoy entre los muslos, ritmo cómodo.</p>
+           <p>3 largos de 50 m a crol con pull-buoy entre los muslos, ritmo cómodo.</p>
            <strong>Foco</strong>
            <p>Brazada larga y relajada. Ya estás cansado, no fuerces.</p>` },
-        { name: "Vuelta a la calma", dist: 200, desc:
+        { name: "Vuelta a la calma", dist: 150, desc:
           `<strong>Qué haces</strong>
-           <p>4 largos de crol muy suaves, respirando cada 3 brazadas (alternando lado).</p>` },
+           <p>3 largos de crol muy suaves, respirando cada 3 brazadas (alternando lado).</p>` },
       ]
     },
   },
@@ -1275,76 +1320,247 @@ const PLAN = {
     { name: "Definición", weeks: [11,12] },
   ],
   dryExercises: {
-    movilidad: [
-      { name: "Estirar pecho en marco de puerta", reps: "30\" cada lado",
-        desc: `<strong>Cómo</strong>
-               <p>1. Ponte en el marco de una puerta.<br>
-                  2. Pon el antebrazo en el marco, codo a 90°, a la altura del hombro.<br>
-                  3. Da un pequeño paso adelante con la pierna del mismo lado.<br>
-                  4. Notarás un estiramiento en el pectoral. Aguanta 30 segundos.<br>
-                  5. Cambia de lado.</p>
-               <div class="tip"><span class="tip-label">Por qué</span> · contrarresta los hombros caídos hacia delante. Lo notarás muchísimo.</div>` },
-      { name: "Rotaciones de hombro con palo o toalla", reps: "2×10",
-        desc: `<strong>Cómo</strong>
-               <p>1. Coge un palo de escoba (o una toalla enrollada tensa).<br>
-                  2. Brazos estirados delante, agarre amplio (más ancho que los hombros).<br>
-                  3. Sin doblar los codos, lleva el palo por encima de la cabeza hasta la espalda baja.<br>
-                  4. Vuelve por el mismo camino. Eso es 1 repetición.<br>
-                  5. Haz 10. Descansa. Otras 10.</p>
-               <div class="tip"><span class="tip-label">Si no llegas</span> · agarre más ancho. Si sigue sin salir, no fuerces, ve mejorando con las semanas.</div>` },
-      { name: "Gato-vaca (cat-cow)", reps: "10 lentas",
-        desc: `<strong>Cómo</strong>
-               <p>1. Apóyate en el suelo a cuatro patas (manos bajo hombros, rodillas bajo caderas).<br>
-                  2. <b>Vaca:</b> deja caer la barriga, saca el pecho, mirada arriba.<br>
-                  3. <b>Gato:</b> redondea la espalda hacia el techo, mete la barbilla.<br>
-                  4. Alterna lentamente. 10 veces cada postura.</p>
-               <div class="tip"><span class="tip-label">Por qué</span> · moviliza toda la columna. Antídoto perfecto contra el día sentado.</div>` },
-      { name: "Wall angels (ángeles en la pared)", reps: "2×10",
-        desc: `<strong>Cómo</strong>
-               <p>1. De pie, espalda completamente pegada a la pared (cabeza, hombros, glúteos, talones — todo tocando).<br>
-                  2. Brazos en "W": codos doblados a la altura de los hombros, dorso de las manos pegado a la pared.<br>
-                  3. Sin despegar nada de la pared, sube los brazos hasta formar una "Y" (estirados arriba).<br>
-                  4. Vuelve a la "W". Eso es 1 repetición.</p>
-               <div class="tip"><span class="tip-label">Si las manos se despegan</span> · es normal al principio. Hazlo solo en el rango donde puedas mantener contacto. Mejorará.</div>` },
-    ],
-    fuerza: [
-      { name: "Flexiones (push-ups)", reps: "3×máx",
-        desc: `<strong>Cómo</strong>
-               <p>1. Manos en el suelo, justo más anchas que los hombros.<br>
-                  2. Cuerpo recto desde la cabeza hasta los talones (no levantes el culo).<br>
-                  3. Baja hasta que el pecho casi toque el suelo.<br>
-                  4. Sube empujando. Eso es 1 repetición.<br>
-                  5. Haz las máximas que puedas con buena técnica. Descansa 1 minuto. Repite 3 veces.</p>
-               <div class="tip"><span class="tip-label">Si no llegas a 8</span> · hazlas con las rodillas apoyadas en el suelo. Cuando llegues a 15 con rodillas, pasa a las normales.</div>` },
-      { name: "Remo invertido (o con banda elástica)", reps: "3×10–12",
-        desc: `<strong>Sin material – remo invertido</strong>
-               <p>1. Túmbate boca arriba debajo de una mesa robusta.<br>
-                  2. Agarra el borde de la mesa con las manos, brazos estirados.<br>
-                  3. Cuerpo recto, talones apoyados en el suelo.<br>
-                  4. Tira hacia arriba hasta que el pecho casi toque la mesa.<br>
-                  5. Baja despacio. 10-12 repeticiones, 3 series.</p>
-               <strong>Con banda elástica</strong>
-               <p>1. Banda enganchada a algo fijo a la altura del pecho.<br>
-                  2. Agarra los extremos, brazos estirados al frente.<br>
-                  3. Tira de la banda hacia ti, llevando los codos atrás y juntando los omoplatos.</p>
-               <div class="tip"><span class="tip-label">Por qué</span> · contrarresta las flexiones (que cierran hombros). Sin esto, te encorvas más.</div>` },
-      { name: "Plancha frontal", reps: "3×30–45\"",
-        desc: `<strong>Cómo</strong>
-               <p>1. Apóyate en el suelo sobre los antebrazos y las puntas de los pies.<br>
-                  2. Codos justo debajo de los hombros.<br>
-                  3. Cuerpo completamente recto: la línea de la cabeza-hombros-cadera-talones forma una sola línea.<br>
-                  4. Aprieta abdomen y glúteos.<br>
-                  5. Aguanta 30-45 segundos. Descansa 30 segundos. Repite 3 veces.</p>
-               <div class="tip"><span class="tip-label">Errores típicos</span> · culo subido (estás descansando) o cadera caída (te haces daño en la lumbar). Recto.</div>` },
-      { name: "Sentadillas al aire", reps: "3×15",
-        desc: `<strong>Cómo</strong>
-               <p>1. De pie, pies a la anchura de los hombros, puntas ligeramente hacia fuera.<br>
-                  2. Baja como si fueras a sentarte en una silla. Culo atrás, rodillas siguen la dirección de los pies.<br>
-                  3. Baja hasta que los muslos queden paralelos al suelo (o lo más bajo que puedas controlar).<br>
-                  4. Sube empujando con los talones. Eso es 1 repetición.<br>
-                  5. 15 repeticiones, 3 series.</p>
-               <div class="tip"><span class="tip-label">Brazos</span> · estirados delante para equilibrarte mientras bajas.</div>` },
-    ]
+    // Routine per day-of-week (1=Mon..7=Sun)
+    1: { // Lunes — Movilidad y postura
+      name: "Movilidad y postura",
+      duration: "5–7 min",
+      exercises: [
+        { name: "Estirar pecho en marco de puerta", reps: "30\" cada lado",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Ponte en el marco de una puerta.<br>
+                    2. Pon el antebrazo en el marco, codo a 90°, a la altura del hombro.<br>
+                    3. Da un pequeño paso adelante con la pierna del mismo lado.<br>
+                    4. Notarás un estiramiento en el pectoral. Aguanta 30 segundos.<br>
+                    5. Cambia de lado.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · contrarresta los hombros caídos hacia delante. Lo notarás muchísimo.</div>` },
+        { name: "Rotaciones de hombro con palo o toalla", reps: "2×10",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Coge un palo de escoba (o una toalla enrollada tensa).<br>
+                    2. Brazos estirados delante, agarre amplio (más ancho que los hombros).<br>
+                    3. Sin doblar los codos, lleva el palo por encima de la cabeza hasta la espalda baja.<br>
+                    4. Vuelve por el mismo camino. Eso es 1 repetición.<br>
+                    5. Haz 10. Descansa. Otras 10.</p>
+                 <div class="tip"><span class="tip-label">Si no llegas</span> · agarre más ancho. Si sigue sin salir, no fuerces, ve mejorando con las semanas.</div>` },
+        { name: "Gato-vaca (cat-cow)", reps: "10 lentas",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Apóyate en el suelo a cuatro patas (manos bajo hombros, rodillas bajo caderas).<br>
+                    2. <b>Vaca:</b> deja caer la barriga, saca el pecho, mirada arriba.<br>
+                    3. <b>Gato:</b> redondea la espalda hacia el techo, mete la barbilla.<br>
+                    4. Alterna lentamente. 10 veces cada postura.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · moviliza toda la columna. Antídoto perfecto contra el día sentado.</div>` },
+        { name: "Wall angels (ángeles en la pared)", reps: "2×10",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, espalda completamente pegada a la pared (cabeza, hombros, glúteos, talones — todo tocando).<br>
+                    2. Brazos en "W": codos doblados a la altura de los hombros, dorso de las manos pegado a la pared.<br>
+                    3. Sin despegar nada de la pared, sube los brazos hasta formar una "Y" (estirados arriba).<br>
+                    4. Vuelve a la "W". Eso es 1 repetición.</p>
+                 <div class="tip"><span class="tip-label">Si las manos se despegan</span> · es normal al principio. Hazlo solo en el rango donde puedas mantener contacto. Mejorará.</div>` },
+      ]
+    },
+    2: { // Martes — Core
+      name: "Core (abdomen y zona media)",
+      duration: "5–7 min",
+      exercises: [
+        { name: "Plancha frontal", reps: "3×30–45\"",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Apóyate en el suelo sobre los antebrazos y las puntas de los pies.<br>
+                    2. Codos justo debajo de los hombros.<br>
+                    3. Cuerpo completamente recto: cabeza-hombros-cadera-talones forman una sola línea.<br>
+                    4. Aprieta abdomen y glúteos.<br>
+                    5. Aguanta 30-45 segundos. Descansa 30 segundos. Repite 3 veces.</p>
+                 <div class="tip"><span class="tip-label">Errores típicos</span> · culo subido (estás descansando) o cadera caída (te haces daño en la lumbar). Recto.</div>` },
+        { name: "Plancha lateral", reps: "2×20\" cada lado",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Túmbate de lado, apoyado en el antebrazo. Codo justo bajo el hombro.<br>
+                    2. Pies juntos o uno delante del otro.<br>
+                    3. Sube la cadera hasta que el cuerpo forme una línea recta de pies a cabeza.<br>
+                    4. Aguanta 20 segundos. Cambia de lado.<br>
+                    5. Haz 2 series por cada lado.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · trabaja los oblicuos, esenciales para la rotación en crol.</div>` },
+        { name: "Dead bug (escarabajo muerto)", reps: "3×10",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Túmbate boca arriba.<br>
+                    2. Brazos estirados hacia el techo, piernas en ángulo recto (rodillas sobre caderas, espinillas paralelas al suelo).<br>
+                    3. Baja a la vez el brazo derecho (por encima de la cabeza) y la pierna izquierda (estirándola hacia el suelo, sin tocarlo).<br>
+                    4. Vuelve. Repite con el otro lado.<br>
+                    5. 10 repeticiones por lado, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Clave</span> · zona lumbar pegada al suelo SIEMPRE. Si se te despega, no bajes tanto.</div>` },
+        { name: "Mountain climbers (escaladores)", reps: "3×30\"",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Posición de plancha alta (brazos estirados, manos bajo hombros).<br>
+                    2. Lleva una rodilla hacia el pecho, vuelve. Cambia de pierna rápido.<br>
+                    3. Como si corrieses en el sitio en posición de plancha.<br>
+                    4. 30 segundos a buen ritmo. Descansa 30. Repite 3 veces.</p>
+                 <div class="tip"><span class="tip-label">Cardio bonus</span> · sube el pulso muchísimo. Buen complemento al trabajo aeróbico de la piscina.</div>` },
+      ]
+    },
+    3: { // Miércoles — Tren superior empuje
+      name: "Tren superior — empuje",
+      duration: "5–7 min",
+      exercises: [
+        { name: "Flexiones (push-ups)", reps: "3×máx",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Manos en el suelo, justo más anchas que los hombros.<br>
+                    2. Cuerpo recto desde la cabeza hasta los talones (no levantes el culo).<br>
+                    3. Baja hasta que el pecho casi toque el suelo.<br>
+                    4. Sube empujando. Eso es 1 repetición.<br>
+                    5. Haz las máximas que puedas con buena técnica. Descansa 1 minuto. Repite 3 veces.</p>
+                 <div class="tip"><span class="tip-label">Si no llegas a 8</span> · hazlas con las rodillas apoyadas en el suelo. Cuando llegues a 15 con rodillas, pasa a las normales.</div>` },
+        { name: "Fondos en silla (dips)", reps: "3×8–12",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Siéntate en el borde de una silla robusta. Manos al borde, agarradas, dedos hacia delante.<br>
+                    2. Adelanta el culo fuera de la silla, piernas estiradas (o flexionadas si es muy duro).<br>
+                    3. Baja doblando los codos hasta que estén a 90°.<br>
+                    4. Sube empujando con los tríceps.<br>
+                    5. 8-12 repeticiones, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · trabaja tríceps y hombros, claves para la fase de empuje en crol.</div>` },
+        { name: "Plancha con toque de hombros", reps: "3×10 (cada lado)",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Plancha alta (brazos estirados).<br>
+                    2. Sin mover la cadera, levanta una mano y tócate el hombro contrario.<br>
+                    3. Vuelve. Alterna.<br>
+                    4. 10 toques con cada mano, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Clave</span> · que la cadera NO se balancee. Si se mueve, abre un poco las piernas.</div>` },
+        { name: "Pica push-up (flexión en V)", reps: "2×8",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Posición de "V" invertida: pies en el suelo, manos en el suelo, culo arriba (postura del perro boca abajo del yoga).<br>
+                    2. Baja la cabeza hacia el suelo doblando los codos.<br>
+                    3. Vuelve a empujar arriba.<br>
+                    4. 8 repeticiones, 2 series.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · simula una press de hombros, refuerza los deltoides — los músculos del "casquete" del hombro.</div>` },
+      ]
+    },
+    4: { // Jueves — Tren superior tracción + espalda alta
+      name: "Tren superior — tracción y espalda",
+      duration: "5–7 min",
+      exercises: [
+        { name: "Remo invertido (o con banda elástica)", reps: "3×10–12",
+          desc: `<strong>Sin material – remo invertido</strong>
+                 <p>1. Túmbate boca arriba debajo de una mesa robusta.<br>
+                    2. Agarra el borde de la mesa con las manos, brazos estirados.<br>
+                    3. Cuerpo recto, talones apoyados en el suelo.<br>
+                    4. Tira hacia arriba hasta que el pecho casi toque la mesa.<br>
+                    5. Baja despacio. 10-12 repeticiones, 3 series.</p>
+                 <strong>Con banda elástica</strong>
+                 <p>1. Banda enganchada a algo fijo a la altura del pecho.<br>
+                    2. Agarra los extremos, brazos estirados al frente.<br>
+                    3. Tira de la banda hacia ti, llevando los codos atrás y juntando los omoplatos.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · perfecto después del día de pull en piscina. Refuerza la musculatura que se usa para "tirar".</div>` },
+        { name: "Superman", reps: "3×12",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Túmbate boca abajo en el suelo, brazos estirados delante.<br>
+                    2. A la vez, levanta brazos y piernas del suelo. Quedas como Superman volando.<br>
+                    3. Aguanta 1-2 segundos arriba. Baja.<br>
+                    4. 12 repeticiones, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · activa toda la cadena posterior (espalda baja, glúteos, isquios). Esencial para postura.</div>` },
+        { name: "Face pull con banda", reps: "3×12",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Engancha una banda elástica a algo fijo, a la altura de la cara.<br>
+                    2. Agarra los extremos, brazos estirados al frente.<br>
+                    3. Tira de la banda hacia tu cara, separando las manos al final (los codos van hacia los lados, altos).<br>
+                    4. 12 repeticiones, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Si no tienes banda</span> · sustituye por "Y-T-W" tumbado boca abajo: levanta los brazos formando esas letras, 8 reps de cada.</div>` },
+        { name: "Estiramiento de hombros (pull)", reps: "30\" cada lado",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, pasa un brazo cruzado por delante del pecho.<br>
+                    2. Con la otra mano, presiona el codo del brazo cruzado para acercarlo más al pecho.<br>
+                    3. Notarás estiramiento en el hombro y deltoides posterior.<br>
+                    4. Aguanta 30 segundos. Cambia de brazo.</p>
+                 <div class="tip"><span class="tip-label">Importante</span> · después del día de pull, este estiramiento ayuda a evitar el "hombro de nadador".</div>` },
+      ]
+    },
+    5: { // Viernes — Tren inferior y glúteos
+      name: "Tren inferior y glúteos",
+      duration: "5–7 min",
+      exercises: [
+        { name: "Sentadillas al aire", reps: "3×15",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, pies a la anchura de los hombros, puntas ligeramente hacia fuera.<br>
+                    2. Baja como si fueras a sentarte en una silla. Culo atrás, rodillas siguen la dirección de los pies.<br>
+                    3. Baja hasta que los muslos queden paralelos al suelo (o lo más bajo que puedas controlar).<br>
+                    4. Sube empujando con los talones. Eso es 1 repetición.<br>
+                    5. 15 repeticiones, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Brazos</span> · estirados delante para equilibrarte mientras bajas.</div>` },
+        { name: "Zancadas alternas (lunges)", reps: "3×10 (cada pierna)",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, da un paso largo adelante con una pierna.<br>
+                    2. Baja hasta que la rodilla de atrás casi toque el suelo y la de delante esté a 90°.<br>
+                    3. Empuja con el talón de delante para volver.<br>
+                    4. Cambia de pierna. 10 con cada una, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Clave</span> · la rodilla de delante NO debe pasar más allá de la punta del pie.</div>` },
+        { name: "Puente de glúteos", reps: "3×15",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Túmbate boca arriba, rodillas dobladas, pies apoyados en el suelo.<br>
+                    2. Brazos al lado del cuerpo, palmas abajo.<br>
+                    3. Aprieta los glúteos y sube la cadera hasta formar una línea recta hombros-cadera-rodillas.<br>
+                    4. Aguanta 1 segundo arriba. Baja.<br>
+                    5. 15 repeticiones, 3 series.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · activa los glúteos, claves para la patada y para la postura de cadera.</div>` },
+        { name: "Sentadilla búlgara (opcional)", reps: "2×8 cada pierna",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, apoya el empeine de un pie atrás sobre una silla o sofá bajo.<br>
+                    2. La pierna de delante a un paso de la silla.<br>
+                    3. Baja como en una sentadilla, doblando solo la pierna de delante.<br>
+                    4. Sube empujando con el talón de la pierna delantera.<br>
+                    5. 8 reps por pierna, 2 series.</p>
+                 <div class="tip"><span class="tip-label">Aviso</span> · es exigente. Si te falla el equilibrio, apóyate en una pared con una mano.</div>` },
+      ]
+    },
+    6: { // Sábado — Estiramientos largos / recuperación
+      name: "Estiramientos y recuperación",
+      duration: "8–10 min",
+      exercises: [
+        { name: "Estiramiento de pecho en marco de puerta", reps: "45\" cada lado",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Ponte en el marco de una puerta, antebrazo en el marco, codo a 90°.<br>
+                    2. Da un pequeño paso adelante.<br>
+                    3. Aguanta 45 segundos (más largo que en días entre semana porque hoy toca recuperar).<br>
+                    4. Cambia de lado.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · después de la sesión larga del sábado, los hombros piden a gritos abrirse.</div>` },
+        { name: "Estiramiento de dorsales (en pared)", reps: "30\" cada lado",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie frente a una pared, a un paso de distancia.<br>
+                    2. Apoya las manos en la pared, brazos estirados, a la altura de la cabeza.<br>
+                    3. Sin mover los pies, deja caer el pecho hacia el suelo, "hundiendo" entre los brazos.<br>
+                    4. Notarás el estiramiento en los dorsales (laterales de la espalda).<br>
+                    5. 30 segundos cada lado.</p>` },
+        { name: "Estiramiento de tríceps", reps: "30\" cada brazo",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De pie, levanta un brazo y dobla el codo llevando la mano hacia la espalda.<br>
+                    2. Con la otra mano, agarra el codo y empújalo hacia atrás suavemente.<br>
+                    3. Aguanta 30 segundos. Cambia.</p>` },
+        { name: "Estiramiento de isquios", reps: "30\" cada pierna",
+          desc: `<strong>Cómo</strong>
+                 <p>1. Sentado en el suelo, una pierna estirada, la otra doblada.<br>
+                    2. Inclínate hacia delante intentando tocarte el pie de la pierna estirada.<br>
+                    3. Sin rebotes, mantén 30 segundos.<br>
+                    4. Cambia de pierna.</p>` },
+        { name: "Postura del niño (yoga)", reps: "1 min",
+          desc: `<strong>Cómo</strong>
+                 <p>1. De rodillas en el suelo, dedos gordos de los pies juntos, separa las rodillas a la anchura de las caderas.<br>
+                    2. Siéntate sobre los talones.<br>
+                    3. Baja el pecho entre las piernas y estira los brazos hacia delante.<br>
+                    4. Frente apoyada en el suelo. Respira hondo durante 1 minuto.</p>
+                 <div class="tip"><span class="tip-label">Por qué</span> · postura clásica de relajación. Estira lumbar, hombros y descomprime toda la espalda.</div>` },
+      ]
+    },
+    7: { // Domingo — Movilidad muy suave
+      name: "Movilidad ligera",
+      duration: "5 min · solo si te apetece",
+      exercises: [
+        { name: "Gato-vaca", reps: "10 lentas",
+          desc: `<strong>Cómo</strong>
+                 <p>A cuatro patas. Alterna lentamente entre redondear la espalda hacia el techo (gato) y hundir la barriga sacando pecho (vaca).</p>
+                 <div class="tip"><span class="tip-label">Hoy es descanso activo</span> · solo lo que te apetezca. No es obligatorio.</div>` },
+        { name: "Círculos de hombros", reps: "10 hacia delante + 10 hacia atrás",
+          desc: `<strong>Cómo</strong>
+                 <p>De pie, brazos relajados a los lados. Haz círculos amplios con los hombros: 10 hacia delante y 10 hacia atrás.</p>` },
+        { name: "Estiramientos suaves", reps: "Lo que te apetezca",
+          desc: `<strong>Cómo</strong>
+                 <p>Si quieres añadir algún estiramiento de pecho, espalda o piernas, adelante. Pero hoy el cuerpo necesita descansar después de los 7 días anteriores. Mejor poco que mucho.</p>
+                 <div class="tip"><span class="tip-label">Filosofía del domingo</span> · si después de la sesión de piscina solo te apetece sofá, hazlo. La recuperación también es entrenamiento.</div>` },
+      ]
+    }
   }
 };
 
@@ -1410,6 +1626,131 @@ function dayOfWeekMonFirst(d){
   // returns 1..7 (Mon..Sun)
   const js = d.getDay(); // 0=Sun..6=Sat
   return js === 0 ? 7 : js;
+}
+
+/**
+ * Returns which session (1..7 in PLAN.sessions) corresponds to a given date,
+ * applying the queue-shifting logic for weekdays:
+ *
+ * - Saturdays (dow=6) and Sundays (dow=7) are FIXED: they always show their
+ *   own long session (sessions 6 and 7).
+ * - Monday→Friday (dow=1..5) form a queue of 5 short sessions per ISO-week.
+ *   The queue starts at session 1 each Monday. If a weekday is marked as
+ *   skipped, that day's session is NOT consumed and rolls forward to the
+ *   next available weekday in the same week.
+ * - Skipped weekend days do not roll into the following week.
+ */
+/**
+ * Configuration: which weekdays are "rest" (no swim) per plan-week.
+ * Plan weeks 1-3 have rest days to ease back into swimming after a long break.
+ * Index is the plan week number (1-indexed). Each value is an array of
+ * day-of-week numbers (1=Mon..5=Fri) that are rest days that week.
+ * Saturdays/Sundays are never rest days in this config — they are the long sessions.
+ */
+const REST_DAYS_BY_WEEK = {
+  1: [3, 5],   // Week 1: Wed and Fri are rest → swim Mon, Tue, Thu, plus Sat, Sun
+  2: [3],      // Week 2: only Wed is rest → swim Mon, Tue, Thu, Fri, plus Sat, Sun
+  3: [3],      // Week 3: only Wed is rest
+  // Week 4+: no rest days, full 7-day plan
+};
+
+function isRestDay(iso){
+  const week = weekNumber(iso);
+  const dow = dayOfWeekMonFirst(parseISO(iso));
+  const restDays = REST_DAYS_BY_WEEK[week];
+  if(!restDays) return false;
+  return restDays.includes(dow);
+}
+
+/**
+ * Returns the long-session distances for a given week.
+ * Phase 1 (weeks 1-3): softer Sat/Sun (900 m).
+ * Week 4+: full distance (1.200 m).
+ */
+function getLongSessionTotal(week){
+  return week <= 3 ? 900 : 1200;
+}
+
+function getSessionForDate(iso){
+  // Rest day → no session
+  if(isRestDay(iso)){
+    return { sessionIdx: null, session: null, isRest: true };
+  }
+
+  const d = parseISO(iso);
+  const dow = dayOfWeekMonFirst(d);
+  const week = weekNumber(iso);
+
+  // Weekends are fixed (with phase-1 distance softening)
+  if(dow === 6 || dow === 7){
+    const baseSession = PLAN.sessions[dow];
+    if(week <= 3){
+      // Return a softened version for phase 1
+      return {
+        sessionIdx: dow,
+        session: scaleLongSession(baseSession, 900),
+        isRest: false
+      };
+    }
+    return { sessionIdx: dow, session: baseSession, isRest: false };
+  }
+
+  // Weekday: walk back to Monday of the same week and replay the queue
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - (dow - 1));
+
+  // Available short-session pool for this week, in order: 1,2,3,4,5
+  // BUT exclude any session indexes that fall on rest days this week
+  // (because we don't want to "queue up" a session for a rest day)
+  // Actually no — the pool is the available sessions, the rest days just mean
+  // those calendar slots are skipped automatically. The pool size stays 5,
+  // but with fewer non-rest days available, some sessions just won't fit.
+  const pool = [1, 2, 3, 4, 5];
+
+  // For each calendar day from Monday up to (but not including) the target date,
+  // consume one session if that day was marked done (skipping rest days entirely)
+  for(let i = 0; i < dow - 1; i++){
+    const dayDate = new Date(monday);
+    dayDate.setDate(monday.getDate() + i);
+    const dayIso = isoOf(dayDate);
+
+    // Rest days don't consume from the pool (they're not training days)
+    if(isRestDay(dayIso)) continue;
+
+    const log = state.logs[dayIso];
+    if(log && log.done){
+      pool.shift();
+    }
+  }
+
+  if(pool.length === 0){
+    return { sessionIdx: null, session: null, isRest: false };
+  }
+
+  const idx = pool[0];
+  return { sessionIdx: idx, session: PLAN.sessions[idx], isRest: false };
+}
+
+/**
+ * Returns a scaled version of a long session with a different total distance.
+ * Proportionally reduces each block's distance.
+ */
+function scaleLongSession(session, newTotal){
+  const ratio = newTotal / session.total;
+  // Round to nearest 50m for clean numbers
+  const round50 = (n) => Math.round(n / 50) * 50;
+  const scaledBlocks = session.blocks.map(b => ({
+    ...b,
+    dist: round50(b.dist * ratio)
+  }));
+  // Adjust last block to make the total exactly match newTotal
+  const sumSoFar = scaledBlocks.slice(0,-1).reduce((s,b)=>s+b.dist, 0);
+  scaledBlocks[scaledBlocks.length-1].dist = newTotal - sumSoFar;
+  return {
+    ...session,
+    total: newTotal,
+    blocks: scaledBlocks
+  };
 }
 function daysBetween(a, b){
   const ms = parseISO(b) - parseISO(a);
@@ -1525,7 +1866,8 @@ function renderHoy(){
   const iso = state.selectedDate || todayISO();
   const d = parseISO(iso);
   const dow = dayOfWeekMonFirst(d);
-  const session = PLAN.sessions[dow];
+  const sessionInfo = getSessionForDate(iso);
+  const session = sessionInfo.session;
   const week = weekNumber(iso);
   const phase = phaseFor(week);
   const log = state.logs[iso] || { blocksDone: [] };
@@ -1539,15 +1881,80 @@ function renderHoy(){
     const dd = new Date(mondayD);
     dd.setDate(mondayD.getDate()+i);
     const ddIso = isoOf(dd);
-    const cls = (ddIso===iso?' active':'') + (isDone(ddIso)?' done':'');
+    const restMark = isRestDay(ddIso);
+    const cls = (ddIso===iso?' active':'') + (isDone(ddIso)?' done':'') + (restMark?' rest':'');
     dayPickerHTML += `<button class="day-pick${cls}" data-iso="${ddIso}">
       <div class="dp-dow">${DOW_NAMES[dd.getDay()]}</div>
-      <div class="dp-num">${dd.getDate()}</div>
+      <div class="dp-num">${restMark?'·':dd.getDate()}</div>
     </button>`;
   }
   dayPickerHTML += '</div>';
 
   let html = dayPickerHTML;
+
+  // Case: no session for this day (rest day OR all weekday slots already completed)
+  if(!session){
+    const isRest = sessionInfo.isRest;
+    let title, subtitle, icon;
+    if(isRest){
+      title = `Día de <em>descanso</em>`;
+      subtitle = week <= 3
+        ? 'Recuperación pautada — tu cuerpo se está adaptando.'
+        : 'Día libre.';
+      icon = '🛌';
+    } else {
+      title = `Día <em>libre</em>`;
+      subtitle = 'Has completado todas las sesiones de esta semana. Buen trabajo.';
+      icon = '✓';
+    }
+    html += `<section class="section">
+      <div class="hero rest">
+        <div class="hero-meta">
+          <div class="hero-day">Sem ${week} · ${DOW_FULL[d.getDay()]}</div>
+          <div class="phase-chip">${phase}</div>
+        </div>
+        <h1 class="hero-title">${title}</h1>
+        <div class="hero-sub">${subtitle}</div>
+      </div>
+    </section>
+
+    ${isRest ? `<section class="section">
+      <div class="stat-card" style="text-align:center;padding:20px;">
+        <div class="stat-label" style="margin-bottom:10px;">Por qué hoy descansas</div>
+        <p style="font-size:14px;line-height:1.55;color:var(--ink);text-align:left;">
+          Tras 10 años sin nadar, los tendones del manguito rotador necesitan más recuperación que tu sistema cardiovascular. Los días de descanso en las primeras semanas reducen drásticamente el riesgo de "hombro de nadador" — la lesión más común al volver al agua.
+        </p>
+        <p style="font-size:13px;margin-top:12px;color:var(--muted);font-style:italic;">
+          A partir de la semana 4 ya nadas los 7 días.
+        </p>
+      </div>
+    </section>` : ''}
+
+    <section class="section">
+      <h3 class="section-title">De un vistazo</h3>
+      <div class="stat-grid">
+        <div class="stat-card flame">
+          <div class="stat-label">Racha</div>
+          <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Esta semana</div>
+          <div class="stat-value">${(weekDistance(monday)/1000).toFixed(1)}<span class="unit">km</span></div>
+        </div>
+      </div>
+    </section>`;
+
+    $content.innerHTML = html;
+
+    // Day picker still needs interaction
+    document.querySelectorAll('.day-pick').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        state.selectedDate = el.dataset.iso;
+        renderHoy();
+      });
+    });
+    return;
+  }
 
   // HERO
   const blocksDone = (log.blocksDone || []).length;
@@ -1666,9 +2073,9 @@ async function toggleBlockDone(iso, idx, blockEl){
     blockEl.classList.toggle('done', arr.includes(idx));
   }
   // Update counter
-  const session = PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))];
+  const session = getSessionForDate(iso).session;
   const counter = document.getElementById('blocksCounter');
-  if(counter){
+  if(counter && session){
     counter.textContent = `${arr.length}/${session.blocks.length}`;
     counter.style.color = arr.length === session.blocks.length ? 'var(--coral)' : 'var(--muted)';
   }
@@ -1681,12 +2088,14 @@ async function markSkipped(iso){
   state.logs[iso] = { ...(state.logs[iso] || {}), done:false, skipped:true };
   await saveState();
   toast('Día marcado como no realizado');
+  updateTabDots();
   renderHoy();
 }
 
 /* --------- MODAL: complete session --------- */
 function openCompleteModal(iso){
-  const session = PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))];
+  const session = getSessionForDate(iso).session;
+  if(!session) return; // safety: shouldn't happen but guard anyway
   const existing = state.logs[iso] || {};
   const html = `
     <div class="modal-bg" id="modalBg">
@@ -1737,6 +2146,7 @@ function openCompleteModal(iso){
   document.getElementById('btnSave').addEventListener('click', async ()=>{
     const distVal = parseInt(document.getElementById('fDist').value) || session.total;
     const notes = document.getElementById('fNotes').value.trim();
+    const info = getSessionForDate(iso);
     state.logs[iso] = {
       ...(state.logs[iso] || {}),
       done: true,
@@ -1744,7 +2154,8 @@ function openCompleteModal(iso){
       distance: distVal,
       feel: pickedFeel,
       notes: notes,
-      blocksDone: PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))].blocks.map((_,i)=>i)
+      sessionIdx: info.sessionIdx, // remember WHICH session was done that day
+      blocksDone: info.session.blocks.map((_,i)=>i)
     };
     await saveState();
     closeModal();
@@ -1776,6 +2187,7 @@ function renderSemana(){
     if(isToday) cls.push('today');
     if(log && log.done) cls.push('done');
     if(log && log.skipped && !log.done) cls.push('skipped');
+    if(isRestDay(dIso) && !(log && log.done)) cls.push('rest');
     cells += `<div class="${cls.join(' ')}" data-iso="${dIso}">${day}</div>`;
   }
 
@@ -1855,7 +2267,9 @@ function renderHistorial(){
     const feels = ['','😣','😮‍💨','🙂','😊','🔥'];
     entries.forEach(([iso, log])=>{
       const d = parseISO(iso);
-      const session = PLAN.sessions[dayOfWeekMonFirst(d)];
+      // Use stored sessionIdx (what was actually done) with fallback to day-of-week
+      const sIdx = log.sessionIdx || dayOfWeekMonFirst(d);
+      const session = PLAN.sessions[sIdx] || PLAN.sessions[dayOfWeekMonFirst(d)];
       if(log.skipped && !log.done){
         html += `<div class="log-item">
           <div class="log-row">
@@ -1985,6 +2399,8 @@ function renderSeco(){
 
   const todayD = new Date();
   const niceDate = DOW_FULL[todayD.getDay()] + ', ' + todayD.getDate() + ' ' + MONTHS[todayD.getMonth()];
+  const dow = dayOfWeekMonFirst(todayD);
+  const routine = PLAN.dryExercises[dow];
 
   const renderDryItem = (ex, key, done) => `
     <div class="dry-item ${done?'done':''}" id="dry-${key}">
@@ -2003,22 +2419,37 @@ function renderSeco(){
 
   let html = `<section class="section">
     <p class="muted" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;padding:0 6px 8px;color:var(--muted);">${niceDate}</p>
-    <h3 class="section-title">Movilidad <span class="muted" style="font-size:11px;">3–4 min · diario</span></h3>
+    <div class="hero" style="background:linear-gradient(155deg, var(--abyss) 0%, var(--water) 100%);margin-bottom:14px;">
+      <div class="hero-meta">
+        <div class="hero-day">Hoy en seco</div>
+        <div class="phase-chip">${routine.duration}</div>
+      </div>
+      <h1 class="hero-title" style="font-size:26px;">${routine.name}</h1>
+      <div class="hero-sub">${routine.exercises.length} ejercicios</div>
+    </div>
     <div class="dry-list">`;
-  PLAN.dryExercises.movilidad.forEach((ex, i)=>{
-    const key = 'mov_'+i;
+  routine.exercises.forEach((ex, i)=>{
+    const key = 'd'+dow+'_'+i;
     html += renderDryItem(ex, key, dryDone.includes(key));
   });
   html += `</div>
   </section>
 
   <section class="section">
-    <h3 class="section-title">Fuerza <span class="muted" style="font-size:11px;">5–7 min · L/X/V</span></h3>
-    <div class="dry-list">`;
-  PLAN.dryExercises.fuerza.forEach((ex, i)=>{
-    const key = 'fue_'+i;
-    html += renderDryItem(ex, key, dryDone.includes(key));
-  });
+    <h3 class="section-title">La semana entera</h3>
+    <div class="dry-list" style="font-size:13px;">`;
+  for(let d=1; d<=7; d++){
+    const r = PLAN.dryExercises[d];
+    const dn = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'][d-1];
+    const isToday = d===dow;
+    html += `<div style="padding:12px 14px;border-bottom:1px solid var(--line-soft);${isToday?'background:var(--sand);':''}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
+        <div style="font-weight:${isToday?'600':'500'};color:${isToday?'var(--abyss)':'var(--ink)'};">${dn}${isToday?' · hoy':''}</div>
+        <div class="dry-reps" style="font-size:12px;">${r.duration}</div>
+      </div>
+      <div class="muted" style="font-size:13px;margin-top:2px;">${r.name}</div>
+    </div>`;
+  }
   html += `</div>
   </section>
 
@@ -2059,6 +2490,8 @@ async function toggleDry(key, itemEl){
   if(itemEl){
     itemEl.classList.toggle('done', arr.includes(key));
   }
+  // Update dots
+  updateTabDots();
   // Save in background
   saveState();
 }
@@ -2320,8 +2753,36 @@ function toast(msg){
 }
 
 /* --------- ROUTER --------- */
+function updateTabDots(){
+  // "Hoy" pending dot: show if today has an available session that hasn't been marked done or skipped
+  const today = todayISO();
+  const log = state.logs[today] || {};
+  const sessionInfo = getSessionForDate(today);
+  const hasSession = !!sessionInfo.session;
+  const pending = hasSession && !log.done && !log.skipped;
+
+  // "En seco" pending dot: show if today's dry routine has any unfinished exercise
+  const dow = dayOfWeekMonFirst(new Date());
+  const dryRoutine = PLAN.dryExercises[dow];
+  const dryDone = log.dryDone || [];
+  const allDryKeys = dryRoutine.exercises.map((_,i) => 'd'+dow+'_'+i);
+  const dryPending = allDryKeys.some(k => !dryDone.includes(k));
+
+  document.querySelectorAll('.tab').forEach(t=>{
+    const existingDot = t.querySelector('.dot');
+    if(existingDot) existingDot.remove();
+    if(t.dataset.tab === 'hoy' && pending){
+      t.insertAdjacentHTML('beforeend', '<span class="dot"></span>');
+    }
+    if(t.dataset.tab === 'seco' && dryPending){
+      t.insertAdjacentHTML('beforeend', '<span class="dot"></span>');
+    }
+  });
+}
+
 function render(){
   updateTopDate();
+  updateTabDots();
   switch(state.activeTab){
     case 'hoy': renderHoy(); break;
     case 'semana': renderSemana(); break;
