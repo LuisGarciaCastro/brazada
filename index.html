@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a3d4a">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+
+<!-- iOS-specific: enable standalone (full-screen) mode -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brazada">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+
+<title>Brazada — Diario de natación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --deep:#072a36;
+  --abyss:#0a3d4a;
+  --water:#0e5b6f;
+  --tide:#3a8a9c;
+  --foam:#a8d8de;
+  --sand:#f4ede0;
+  --bone:#fbf7ef;
+  --coral:#e87559;
+  --gold:#d4a74a;
+  --ink:#0b1f25;
+  --muted:#6b8a92;
+  --line:rgba(10,61,74,0.12);
+  --line-soft:rgba(10,61,74,0.06);
+  --shadow:0 1px 2px rgba(7,42,54,0.04), 0 8px 24px rgba(7,42,54,0.06);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{overscroll-behavior:none;}
+
+body{
+  font-family:'Inter Tight', sans-serif;
+  background:var(--bone);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.5;
+  min-height:100vh;
+  /* iOS safe-area */
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+  background-image:
+    radial-gradient(circle at 15% -10%, rgba(168,216,222,0.35), transparent 50%),
+    radial-gradient(circle at 90% 100%, rgba(232,117,89,0.07), transparent 40%);
+  background-attachment:fixed;
+}
+
+.app{
+  max-width:520px;
+  margin:0 auto;
+  padding:0 0 100px;
+  position:relative;
+}
+
+/* ---------- HEADER ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 22px 8px;
+}
+.brand{
+  font-family:'Fraunces', serif;
+  font-weight:500;
+  font-style:italic;
+  font-size:20px;
+  color:var(--abyss);
+  letter-spacing:-0.01em;
+}
+.brand span{color:var(--coral);}
+.date-pill{
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:500;
+}
+
+/* ---------- TABS ---------- */
+.tabs{
+  display:flex;
+  gap:4px;
+  padding:6px 22px 14px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{
+  background:transparent;
+  border:none;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:500;
+  color:var(--muted);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:all .2s;
+  letter-spacing:0.01em;
+}
+.tab.active{
+  background:var(--abyss);
+  color:var(--bone);
+}
+
+/* ---------- HERO TODAY ---------- */
+.hero{
+  margin:6px 16px 18px;
+  padding:24px 22px 26px;
+  background:linear-gradient(155deg, var(--abyss) 0%, var(--water) 60%, var(--tide) 130%);
+  border-radius:24px;
+  color:var(--bone);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 12px 32px rgba(7,42,54,0.18);
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(168,216,222,0.18), transparent 50%),
+    radial-gradient(circle at 10% 100%, rgba(232,117,89,0.12), transparent 50%);
+  pointer-events:none;
+}
+.hero-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  margin-bottom:16px;
+  position:relative;
+  z-index:1;
+}
+.hero-day{
+  font-family:'Fraunces', serif;
+  font-size:13px;
+  font-weight:400;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--foam);
+  opacity:0.85;
+}
+.phase-chip{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  font-weight:600;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.13);
+  border:1px solid rgba(255,255,255,0.2);
+  color:var(--bone);
+  backdrop-filter:blur(4px);
+}
+.hero-title{
+  font-family:'Fraunces', serif;
+  font-weight:400;
+  font-size:30px;
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  margin-bottom:6px;
+  position:relative;
+  z-index:1;
+}
+.hero-title em{
+  font-style:italic;
+  color:var(--foam);
+}
+.hero-sub{
+  font-size:14px;
+  color:var(--foam);
+  opacity:0.8;
+  position:relative;
+  z-index:1;
+  margin-bottom:18px;
+}
+.hero-stats{
+  display:flex;
+  gap:18px;
+  position:relative;
+  z-index:1;
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,0.15);
+}
+.hero-stat{flex:1;}
+.hero-stat .v{
+  font-family:'Fraunces', serif;
+  font-size:22px;
+  font-weight:400;
+  letter-spacing:-0.02em;
+}
+.hero-stat .l{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--foam);
+  opacity:0.7;
+  margin-top:2px;
+}
+
+/* Rest day variant */
+.hero.rest{
+  background:linear-gradient(155deg, #2a4a52 0%, #3a6470 100%);
+}
+
+/* ---------- SECTION ---------- */
+.section{
+  margin:0 16px 18px;
+}
+.section-title{
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin:0 6px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* ---------- BLOCKS (sesión) ---------- */
+.blocks{
+  background:white;
+  border-radius:20px;
+  padding:6px;
+  box-shadow:var(--shadow);
+}
+.block{
+  border-radius:14px;
+  transition:background .15s;
+}
+.block:not(:last-child){border-bottom:1px solid var(--line-soft);}
+.block-row{
+  display:flex;
+  gap:12px;
+  padding:14px 14px;
+  align-items:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.block-row:active{background:var(--sand);}
+.block-main{
+  flex:1;
+  min-width:0;
+}
+.block-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:10px;
+}
+.block-name{
+  font-weight:600;
+  font-size:14px;
+  color:var(--ink);
+  letter-spacing:-0.005em;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.block-name .chev{
+  display:inline-block;
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+  transition:transform .25s;
+  color:var(--muted);
+  opacity:0.6;
+}
+.block.expanded .block-name .chev{
+  transform:rotate(90deg);
+  opacity:1;
+  color:var(--abyss);
+}
+.block.done .block-name{
+  color:var(--muted);
+  text-decoration:line-through;
+  text-decoration-thickness:1px;
+}
+.block-dist{
+  font-family:'Fraunces', serif;
+  font-size:13px;
+  color:var(--water);
+  font-weight:500;
+  white-space:nowrap;
+}
+.check-btn{
+  flex-shrink:0;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1.5px solid var(--line);
+  background:var(--bone);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:all .15s;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.check-btn:active{transform:scale(0.92);}
+.check-btn .tick{
+  width:10px;
+  height:5px;
+  border-left:1.8px solid transparent;
+  border-bottom:1.8px solid transparent;
+  transform:rotate(-45deg) translate(1px,-1px);
+  transition:border-color .15s;
+}
+.block.done .check-btn{
+  background:var(--abyss);
+  border-color:var(--abyss);
+}
+.block.done .check-btn .tick{
+  border-left-color:var(--bone);
+  border-bottom-color:var(--bone);
+}
+.block-desc{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .3s ease-out, padding .3s ease-out;
+  font-size:13.5px;
+  color:var(--ink);
+  line-height:1.55;
+  padding:0 14px;
+}
+.block.expanded .block-desc{
+  max-height:600px;
+  padding:4px 18px 16px 50px;
+}
+.block-desc strong{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--water);
+  font-weight:700;
+  margin-top:10px;
+  margin-bottom:3px;
+}
+.block-desc strong:first-child{margin-top:0;}
+.block-desc p{margin:0 0 6px;color:var(--ink);}
+.block-desc .tip{
+  background:var(--sand);
+  padding:8px 12px;
+  border-radius:8px;
+  margin-top:8px;
+  font-size:13px;
+  color:var(--ink);
+  border-left:2px solid var(--coral);
+}
+.block-desc .tip-label{
+  font-weight:600;
+  color:var(--coral);
+}
+
+/* ---------- ACTIONS ---------- */
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:16px;
+}
+.btn{
+  font-family:inherit;
+  border:none;
+  cursor:pointer;
+  font-weight:500;
+  font-size:14px;
+  padding:14px 16px;
+  border-radius:14px;
+  transition:all .15s;
+  letter-spacing:0.005em;
+}
+.btn-primary{
+  background:var(--abyss);
+  color:var(--bone);
+}
+.btn-primary:active{transform:scale(0.98);background:var(--water);}
+.btn-secondary{
+  background:transparent;
+  color:var(--abyss);
+  border:1.5px solid var(--line);
+}
+.btn-secondary:active{background:var(--sand);}
+.btn-full{grid-column:1/-1;}
+.btn-coral{background:var(--coral);color:white;}
+.btn-coral:active{background:#d56549;}
+
+/* ---------- LOG / STATS ---------- */
+.stat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.stat-card{
+  background:white;
+  border-radius:18px;
+  padding:18px 18px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.stat-card.featured{
+  grid-column:1/-1;
+  background:linear-gradient(135deg, var(--sand), #f0e6d3);
+}
+.stat-label{
+  font-size:10px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin-bottom:8px;
+}
+.stat-value{
+  font-family:'Fraunces', serif;
+  font-size:34px;
+  line-height:1;
+  font-weight:400;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+}
+.stat-value .unit{
+  font-size:14px;
+  color:var(--muted);
+  margin-left:4px;
+  font-weight:400;
+  font-style:italic;
+}
+.stat-sub{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:6px;
+}
+.stat-card.flame .stat-value{color:var(--coral);}
+
+/* ---------- CALENDAR ---------- */
+.calendar{
+  background:white;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.cal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+.cal-title{
+  font-family:'Fraunces', serif;
+  font-size:18px;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  text-transform:capitalize;
+}
+.cal-nav{
+  display:flex;
+  gap:6px;
+}
+.cal-nav button{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid var(--line);
+  background:white;
+  cursor:pointer;
+  font-size:14px;
+  color:var(--abyss);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.cal-nav button:active{background:var(--sand);}
+.cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7, 1fr);
+  gap:4px;
+}
+.cal-dow{
+  text-align:center;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  padding:6px 0;
+}
+.cal-day{
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  border-radius:10px;
+  position:relative;
+  font-weight:500;
+  color:var(--ink);
+}
+.cal-day.empty{color:transparent;pointer-events:none;}
+.cal-day.future{color:var(--muted);opacity:0.4;}
+.cal-day.today{
+  background:var(--abyss);
+  color:var(--bone);
+}
+.cal-day.done:not(.today){
+  background:var(--foam);
+  color:var(--abyss);
+}
+.cal-day.done.today{
+  background:var(--coral);
+  color:white;
+}
+.cal-day.skipped{
+  color:var(--muted);
+  text-decoration:line-through;
+}
+
+/* ---------- LOG LIST ---------- */
+.log-list{
+  background:white;
+  border-radius:20px;
+  padding:6px;
+  box-shadow:var(--shadow);
+}
+.log-item{
+  padding:14px;
+  border-bottom:1px solid var(--line-soft);
+}
+.log-item:last-child{border-bottom:none;}
+.log-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:4px;
+}
+.log-date{
+  font-family:'Fraunces', serif;
+  font-size:15px;
+  font-weight:500;
+}
+.log-meta{
+  font-size:12px;
+  color:var(--muted);
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.log-dist{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  color:var(--water);
+  font-weight:500;
+}
+.log-feel{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.log-notes{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:6px;
+  font-style:italic;
+  line-height:1.4;
+}
+.log-empty{
+  text-align:center;
+  padding:40px 20px;
+  color:var(--muted);
+  font-size:14px;
+}
+.log-empty .big{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:20px;
+  color:var(--abyss);
+  margin-bottom:6px;
+  display:block;
+}
+
+/* ---------- CHART ---------- */
+.chart{
+  background:white;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+.chart-title{
+  font-family:'Fraunces', serif;
+  font-size:16px;
+  font-weight:500;
+  margin-bottom:14px;
+}
+.chart-bars{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  height:120px;
+  padding:0 4px;
+}
+.chart-col{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  height:100%;
+  justify-content:flex-end;
+}
+.chart-bar{
+  width:100%;
+  background:linear-gradient(180deg, var(--tide), var(--water));
+  border-radius:6px 6px 2px 2px;
+  min-height:3px;
+  transition:height .4s ease-out;
+}
+.chart-bar.zero{background:var(--line);}
+.chart-label{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+/* ---------- MODAL ---------- */
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(7,42,54,0.5);
+  backdrop-filter:blur(4px);
+  z-index:100;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  animation:fade .2s;
+}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal{
+  background:var(--bone);
+  width:100%;
+  max-width:520px;
+  border-radius:24px 24px 0 0;
+  padding:24px 22px 32px;
+  animation:slideUp .25s ease-out;
+  max-height:90vh;
+  overflow-y:auto;
+}
+.modal-handle{
+  width:38px;
+  height:4px;
+  background:var(--line);
+  border-radius:999px;
+  margin:-10px auto 14px;
+}
+.modal h3{
+  font-family:'Fraunces', serif;
+  font-weight:500;
+  font-size:22px;
+  letter-spacing:-0.02em;
+  margin-bottom:18px;
+}
+.field{margin-bottom:16px;}
+.field label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:600;
+  margin-bottom:8px;
+}
+.field input[type="number"], .field textarea{
+  width:100%;
+  background:white;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+  font-family:inherit;
+  font-size:15px;
+  color:var(--ink);
+  transition:border .15s;
+}
+.field input:focus, .field textarea:focus{
+  outline:none;
+  border-color:var(--abyss);
+}
+.field textarea{resize:vertical;min-height:70px;}
+.feel-row{
+  display:flex;
+  gap:8px;
+}
+.feel-btn{
+  flex:1;
+  padding:14px 4px;
+  background:white;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  cursor:pointer;
+  font-size:22px;
+  transition:all .15s;
+  font-family:inherit;
+}
+.feel-btn.selected{
+  border-color:var(--abyss);
+  background:var(--sand);
+}
+
+/* ---------- TIMER ---------- */
+.timer-card{
+  background:linear-gradient(155deg, var(--deep), var(--water));
+  border-radius:20px;
+  padding:28px 22px;
+  color:var(--bone);
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+.timer-display{
+  font-family:'Fraunces', serif;
+  font-size:64px;
+  font-weight:300;
+  letter-spacing:-0.04em;
+  line-height:1;
+  margin:14px 0 18px;
+  font-variant-numeric:tabular-nums;
+}
+.timer-btns{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+}
+.timer-btn{
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.25);
+  color:var(--bone);
+  padding:12px 24px;
+  border-radius:999px;
+  font-family:inherit;
+  font-weight:500;
+  font-size:14px;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+}
+.timer-btn:active{background:rgba(255,255,255,0.25);}
+
+/* ---------- DRY EXERCISES ---------- */
+.dry-list{
+  background:white;
+  border-radius:20px;
+  padding:6px;
+  box-shadow:var(--shadow);
+}
+.dry-item{
+  border-bottom:1px solid var(--line-soft);
+}
+.dry-item:last-child{border-bottom:none;}
+.dry-row{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px 14px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  border-radius:10px;
+  transition:background .12s;
+}
+.dry-row:active{background:var(--sand);}
+.dry-check{
+  flex-shrink:0;
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  border:1.5px solid var(--line);
+  background:var(--bone);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s;
+  cursor:pointer;
+}
+.dry-check:active{transform:scale(0.92);}
+.dry-check .tick{
+  width:9px;
+  height:4px;
+  border-left:1.8px solid transparent;
+  border-bottom:1.8px solid transparent;
+  transform:rotate(-45deg) translate(1px,-1px);
+}
+.dry-item.done .dry-check{
+  background:var(--abyss);
+  border-color:var(--abyss);
+}
+.dry-item.done .dry-check .tick{
+  border-left-color:var(--bone);
+  border-bottom-color:var(--bone);
+}
+.dry-item.done .dry-name{
+  color:var(--muted);
+  text-decoration:line-through;
+  text-decoration-thickness:1px;
+}
+.dry-name{
+  flex:1;
+  font-size:14px;
+  transition:color .15s;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.dry-name .chev{
+  display:inline-block;
+  width:13px;
+  height:13px;
+  flex-shrink:0;
+  transition:transform .25s;
+  color:var(--muted);
+  opacity:0.6;
+}
+.dry-item.expanded .dry-name .chev{
+  transform:rotate(90deg);
+  opacity:1;
+  color:var(--abyss);
+}
+.dry-reps{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:13px;
+  color:var(--muted);
+}
+.dry-desc{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .3s ease-out, padding .3s ease-out;
+  font-size:13.5px;
+  color:var(--ink);
+  line-height:1.55;
+  padding:0 14px;
+}
+.dry-item.expanded .dry-desc{
+  max-height:500px;
+  padding:4px 18px 16px 56px;
+}
+.dry-desc strong{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--water);
+  font-weight:700;
+  margin-top:10px;
+  margin-bottom:3px;
+}
+.dry-desc strong:first-child{margin-top:0;}
+.dry-desc p{margin:0 0 6px;color:var(--ink);}
+.dry-desc .tip{
+  background:var(--sand);
+  padding:8px 12px;
+  border-radius:8px;
+  margin-top:8px;
+  font-size:13px;
+  color:var(--ink);
+  border-left:2px solid var(--coral);
+}
+.dry-desc .tip-label{
+  font-weight:600;
+  color:var(--coral);
+}
+
+/* ---------- TOAST ---------- */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  background:var(--abyss);
+  color:var(--bone);
+  padding:12px 20px;
+  border-radius:999px;
+  font-size:14px;
+  z-index:200;
+  box-shadow:0 8px 24px rgba(7,42,54,0.3);
+  animation:toastIn .2s;
+  font-weight:500;
+}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px);}to{opacity:1;transform:translate(-50%,0);}}
+
+/* ---------- DAY PICKER ---------- */
+.day-picker{
+  display:flex;
+  gap:6px;
+  padding:0 16px 12px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.day-picker::-webkit-scrollbar{display:none;}
+.day-pick{
+  flex-shrink:0;
+  background:white;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:8px 12px;
+  cursor:pointer;
+  font-family:inherit;
+  text-align:center;
+  min-width:54px;
+  transition:all .15s;
+}
+.day-pick.active{
+  background:var(--abyss);
+  border-color:var(--abyss);
+  color:var(--bone);
+}
+.day-pick.done{
+  background:var(--foam);
+  border-color:var(--foam);
+}
+.day-pick.done.active{
+  background:var(--abyss);
+  border-color:var(--abyss);
+  color:var(--bone);
+}
+.dp-dow{
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  font-weight:600;
+  opacity:0.7;
+}
+.dp-num{
+  font-family:'Fraunces', serif;
+  font-size:18px;
+  font-weight:500;
+  margin-top:2px;
+}
+.day-pick.done:not(.active) .dp-num::after{
+  content:'•';
+  color:var(--coral);
+  margin-left:2px;
+}
+
+/* small text helper */
+.muted{color:var(--muted);font-size:13px;}
+.center{text-align:center;}
+.divider{
+  height:1px;
+  background:var(--line-soft);
+  margin:14px 0;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="brand">Brazada<span>.</span></div>
+    <div class="date-pill" id="topDate">—</div>
+  </header>
+
+  <!-- ===== TABS ===== -->
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="hoy">Hoy</button>
+    <button class="tab" data-tab="semana">Semana</button>
+    <button class="tab" data-tab="historial">Historial</button>
+    <button class="tab" data-tab="progreso">Progreso</button>
+    <button class="tab" data-tab="seco">En seco</button>
+    <button class="tab" data-tab="cronometro">Test 400 m</button>
+  </nav>
+
+  <main id="content"></main>
+
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+/* ============================================================
+   PLAN DATA
+============================================================ */
+const PLAN = {
+  // sessions[dayOfWeek 0=Sun..6=Sat] but we use 1..7 = Mon..Sun
+  sessions: {
+    1: { // Lunes
+      name: "Técnica + suave",
+      stroke: "Crol",
+      total: 900,
+      blocks: [
+        { name: "Calentamiento", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de la piscina (200 m): 2 a crol y 2 a espalda, alternando. Despacio, sin forzar.</p>
+           <strong>Cómo</strong>
+           <p>Respira cuando quieras. El objetivo no es ir rápido, es soltar hombros y meterte en el agua.</p>
+           <div class="tip"><span class="tip-label">Recuerda</span> · si te falta el aire, vas demasiado rápido. Baja el ritmo.</div>` },
+        { name: "Técnica – brazada larga", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 series de 50 m (1 largo de ida + 1 de vuelta). En la <b>ida</b>, "punto muerto". En la <b>vuelta</b>, crol normal.</p>
+           <strong>El "punto muerto" paso a paso</strong>
+           <p>1. Estira un brazo delante (como si quisieras tocar la pared opuesta).<br>
+              2. Ese brazo se queda quieto, esperando.<br>
+              3. El otro brazo da una brazada completa hasta tocar al primero.<br>
+              4. Cuando se tocan, el que estaba quieto empieza a tirar. Y así.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos en la pared entre cada serie de 50 m.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · te obliga a "alargar" la brazada en vez de mover los brazos rápido. Es la base de nadar bien.</div>` },
+        { name: "Principal – crol cómodo", dist: 300, desc:
+          `<strong>Qué haces</strong>
+           <p>6 series de 50 m a crol normal, a un ritmo cómodo (que puedas mantener una conversación entrecortada).</p>
+           <strong>Foco</strong>
+           <p>Alarga cada brazada. Mejor pocas brazadas largas que muchas cortas y rápidas.</p>
+           <strong>Descanso</strong>
+           <p>15 segundos en la pared entre cada 50 m.</p>` },
+        { name: "Vuelta a la calma", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos suaves (200 m). 2 a espalda + 2 a crol respirando cada 3 brazadas.</p>
+           <strong>Respirar cada 3 brazadas</strong>
+           <p>En crol, en lugar de respirar siempre por el mismo lado, cuentas: brazada-1, brazada-2, respiras al lado derecho, brazada-1, brazada-2, respiras al lado izquierdo. Y así.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · respirar siempre por el mismo lado descompensa hombros y cuello. Esto los iguala.</div>` },
+      ]
+    },
+    2: { // Martes
+      name: "Series cortas",
+      stroke: "Crol",
+      total: 900,
+      blocks: [
+        { name: "Calentamiento", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos suaves (200 m), alternando crol y espalda.</p>
+           <strong>Cómo</strong>
+           <p>Pulso bajo, respiración cómoda. Estás preparando el cuerpo, no compitiendo.</p>` },
+        { name: "Activación", dist: 100, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos cortos de 25 m a crol, cada uno un poco más rápido que el anterior.</p>
+           <strong>Ritmo</strong>
+           <p>1º: suave (como en el calentamiento).<br>
+              2º: medio.<br>
+              3º: rápido.<br>
+              4º: casi al máximo.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos en la pared entre cada uno.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · prepara el cuerpo para la parte intensa que viene.</div>` },
+        { name: "Principal – series intensas", dist: 400, desc:
+          `<strong>Qué haces</strong>
+           <p>8 largos de 50 m a crol, a ritmo <b>fuerte</b>.</p>
+           <strong>Qué significa "fuerte"</strong>
+           <p>Aproximadamente al 80% de tu máximo. Acabas el largo respirando bastante, pero no completamente reventado. Si pudieras aguantar más de 100 m así, te falta intensidad.</p>
+           <strong>Descanso</strong>
+           <p>30 segundos en la pared entre cada 50 m. Aprovecha para recuperar la respiración.</p>
+           <div class="tip"><span class="tip-label">Aviso</span> · si te quedas sin aire a la mitad, baja un poco el ritmo. Mejor 8 largos sostenidos que 3 a tope y morir.</div>` },
+        { name: "Vuelta a la calma", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos muy suaves (200 m). 2 a espalda + 2 a crol.</p>
+           <strong>Cómo</strong>
+           <p>Lentísimo. Esto baja el pulso y evita que salgas mareado de la piscina.</p>` },
+      ]
+    },
+    3: { // Miércoles
+      name: "Espalda y postura",
+      stroke: "Espalda",
+      total: 900,
+      blocks: [
+        { name: "Calentamiento", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos (200 m) alternando: 1 crol + 1 espalda + 1 crol + 1 espalda. Suave.</p>
+           <strong>Cómo</strong>
+           <p>En la espalda, túmbate bien plano, mirada al techo, sin levantar la cabeza.</p>` },
+        { name: "Drills – espalda con un brazo", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 series de 50 m. En la <b>ida</b>, espalda con un solo brazo. En la <b>vuelta</b>, espalda normal.</p>
+           <strong>Espalda con un brazo paso a paso</strong>
+           <p>1. Túmbate boca arriba en el agua.<br>
+              2. Un brazo pegado al costado, sin moverlo.<br>
+              3. El otro brazo hace todo el trabajo: sale del agua, va por encima, entra detrás de la cabeza, tira.<br>
+              4. Haz 25 m con un brazo, da la vuelta y haz los siguientes 25 m con el otro brazo.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos entre cada 50 m.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · obliga a cada lado del cuerpo a trabajar por separado. Iguala asimetrías y abre el pecho — clave para tu postura.</div>` },
+        { name: "Principal – espalda continua", dist: 300, desc:
+          `<strong>Qué haces</strong>
+           <p>6 largos de 50 m a espalda normal, a ritmo cómodo.</p>
+           <strong>Foco postural</strong>
+           <p>• Mirada fija al techo (si miras la pared, hundes la cadera).<br>
+              • Cadera arriba, como si quisieras sacar el ombligo del agua.<br>
+              • Brazos completamente estirados, no doblados.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos entre cada 50 m.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · la espalda es el estilo postural por excelencia. Abre pecho, activa la musculatura entre los omoplatos y compensa el "encorvamiento" de oficina/móvil.</div>` },
+        { name: "Vuelta a la calma", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de crol muy suaves, respirando cada 3 brazadas (alternando lados).</p>
+           <strong>Recordatorio</strong>
+           <p>Brazada-1, brazada-2, respiro derecha. Brazada-1, brazada-2, respiro izquierda. Y así.</p>` },
+      ]
+    },
+    4: { // Jueves
+      name: "Pull / brazos",
+      stroke: "Crol con pull-buoy",
+      total: 1000,
+      blocks: [
+        { name: "Calentamiento", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de crol normal, suave. Sin pull-buoy todavía.</p>
+           <strong>Antes de empezar</strong>
+           <p>Si no sabes qué es el pull-buoy: es ese cacharro de espuma con forma de "8" que se aprieta entre los muslos. Lo encuentras gratis en cualquier piscina (en el cesto del material).</p>` },
+        { name: "Pull suave – con pull-buoy", dist: 300, desc:
+          `<strong>Qué haces</strong>
+           <p>6 largos de 50 m a crol, con el pull-buoy entre los muslos. Ritmo cómodo.</p>
+           <strong>Cómo se usa el pull-buoy</strong>
+           <p>1. Lo aprietas entre los muslos (no entre las rodillas, demasiado abajo no aguanta).<br>
+              2. Hace flotar las piernas → tú no pateas, dejas las piernas quietas.<br>
+              3. Solo trabajan los brazos.</p>
+           <strong>Foco</strong>
+           <p>Brazada larga, "tirando" del agua hacia atrás como si tirases de una cuerda.</p>
+           <strong>Descanso</strong>
+           <p>25 segundos entre cada 50 m.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · al anular las piernas, todo el esfuerzo recae en brazos, hombros y espalda. Es la sesión que más te va a marcar el tren superior.</div>` },
+        { name: "Pull intenso – con pull-buoy", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de 50 m a crol con pull-buoy, esta vez a ritmo <b>fuerte</b>.</p>
+           <strong>Ritmo</strong>
+           <p>Como las series del martes (~80% de tu máximo). Llegas al final del largo respirando bastante.</p>
+           <strong>Descanso</strong>
+           <p>30 segundos entre cada 50 m.</p>` },
+        { name: "Espalda suave", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de espalda normal, muy suaves. Sin pull-buoy.</p>
+           <strong>Por qué este bloque</strong>
+           <p>Los hombros han trabajado muchísimo en el pull. La espalda hace el movimiento opuesto y los descomprime, evitando que mañana te duelan.</p>
+           <div class="tip"><span class="tip-label">Importante</span> · no te lo saltes. Los hombros de nadador (lesión típica) vienen de no descompensar.</div>` },
+        { name: "Vuelta a la calma", dist: 100, desc:
+          `<strong>Qué haces</strong>
+           <p>2 largos de crol muy suaves para terminar.</p>` },
+      ]
+    },
+    5: { // Viernes
+      name: "Patada / piernas",
+      stroke: "Patada con tabla",
+      total: 800,
+      blocks: [
+        { name: "Calentamiento", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de crol suave para entrar en calor.</p>
+           <strong>Antes de empezar</strong>
+           <p>Coge la tabla del cesto del material (es un rectángulo plano de espuma).</p>` },
+        { name: "Patada de crol con tabla", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>8 largos cortos de 25 m, pateando con la tabla.</p>
+           <strong>Cómo</strong>
+           <p>1. Agarra la tabla por el borde más alejado, brazos estirados delante.<br>
+              2. Cara dentro del agua mirando al fondo, sacas la cabeza solo para respirar.<br>
+              3. Patada de crol: piernas casi rectas, el movimiento sale de la cadera, no de la rodilla.<br>
+              4. Pies relajados, casi como si arrastraras los dedos por la superficie.</p>
+           <strong>Descanso</strong>
+           <p>25 segundos entre cada 25 m.</p>
+           <div class="tip"><span class="tip-label">Aviso</span> · vas a notar que el pulso sube muchísimo. Es normal, las piernas son los músculos más grandes y queman energía como locos. Por eso este día es exigente cardiovascularmente.</div>` },
+        { name: "Patada de espalda", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de 50 m, pateando boca arriba sin tabla.</p>
+           <strong>Cómo</strong>
+           <p>1. Túmbate de espaldas, mirada al techo.<br>
+              2. Brazos pegados al costado, sin moverlos (también puedes estirarlos por encima de la cabeza, juntos, si te resulta más cómodo).<br>
+              3. Patada continua, igual que la de crol pero al revés.</p>
+           <strong>Descanso</strong>
+           <p>30 segundos entre cada 50 m.</p>
+           <div class="tip"><span class="tip-label">Si te hundes</span> · saca un poco más la cadera. Pecho arriba, ombligo arriba.</div>` },
+        { name: "Vuelta a la calma", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de crol completo (con brazos y piernas), muy suaves.</p>` },
+      ]
+    },
+    6: { // Sábado
+      name: "Aeróbico continuo + técnica",
+      stroke: "Crol",
+      total: 1800,
+      blocks: [
+        { name: "Calentamiento", dist: 400, desc:
+          `<strong>Qué haces</strong>
+           <p>8 largos suaves (400 m), alternando crol y espalda cada 50 m.</p>
+           <strong>Cómo</strong>
+           <p>Es un calentamiento más largo porque la sesión principal es exigente. Tómatelo en serio.</p>` },
+        { name: "Técnica – mezcla de drills", dist: 300, desc:
+          `<strong>Qué haces</strong>
+           <p>6 largos de 50 m, alternando los drills que ya conoces:</p>
+           <p>• Largo 1: punto muerto (lunes)<br>
+              • Largo 2: respirando cada 5 brazadas en crol<br>
+              • Largo 3: punto muerto<br>
+              • Largo 4: respirando cada 5<br>
+              • Largo 5: punto muerto<br>
+              • Largo 6: respirando cada 5</p>
+           <strong>"Respirar cada 5"</strong>
+           <p>Da 4 brazadas seguidas sin respirar y respira en la 5ª. Trabaja capacidad pulmonar.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos entre cada 50 m.</p>` },
+        { name: "Principal – continuo", dist: 800, desc:
+          `<strong>Qué haces</strong>
+           <p>2 bloques de 400 m a crol seguidos (16 largos cada bloque), a ritmo cómodo y constante.</p>
+           <strong>Cómo</strong>
+           <p>El reto NO es ir rápido. Es nadar 400 m sin parar manteniendo el mismo ritmo de principio a fin. Encuentra una velocidad sostenible.</p>
+           <strong>Descanso</strong>
+           <p>1 minuto en la pared entre los dos bloques.</p>
+           <div class="tip"><span class="tip-label">Si te cuesta</span> · en lugar de 2×400, hazlo como 4×200 m con 30 segundos de descanso entre cada uno. Es totalmente válido y vas progresando hacia el continuo.</div>` },
+        { name: "Vuelta a la calma", dist: 300, desc:
+          `<strong>Qué haces</strong>
+           <p>6 largos muy suaves (300 m): 3 a espalda + 3 a crol.</p>
+           <strong>Por qué tan larga</strong>
+           <p>Has nadado 1.500 m antes de esto. Necesitas una bajada de pulso real para no salir mareado.</p>` },
+      ]
+    },
+    7: { // Domingo
+      name: "Sesión variada",
+      stroke: "Todos los estilos",
+      total: 1800,
+      blocks: [
+        { name: "Calentamiento", dist: 400, desc:
+          `<strong>Qué haces</strong>
+           <p>8 largos suaves (400 m), alternando crol y espalda.</p>` },
+        { name: "Pirámide", dist: 800, desc:
+          `<strong>Qué haces</strong>
+           <p>Una "pirámide": vas subiendo distancia, llegas al pico, y vuelves a bajar.</p>
+           <p>• 50 m crol<br>
+              • 100 m crol<br>
+              • 150 m crol<br>
+              • 200 m crol ← pico<br>
+              • 150 m crol<br>
+              • 100 m crol<br>
+              • 50 m crol</p>
+           <strong>Ritmo</strong>
+           <p>Medio. Ni suave ni fuerte. Cómodo pero con intención.</p>
+           <strong>Descanso</strong>
+           <p>20 segundos entre los tramos cortos (50, 100), 30 segundos entre los largos (150, 200).</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · la pirámide entrena resistencia mental y física. Cuando ya estás cansado y aún quedan tramos, aprendes a dosificar.</div>` },
+        { name: "Otros estilos", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 series de 50 m. En cada una: 25 m a braza + 25 m a espalda.</p>
+           <strong>La braza</strong>
+           <p>Si recuerdas hacerla, perfecto. Si no, brazada en círculo desde delante hacia los lados, y patada de rana (rodillas se separan, talones al culo, golpe hacia fuera).</p>
+           <strong>Descanso</strong>
+           <p>20 segundos entre series.</p>
+           <div class="tip"><span class="tip-label">Por qué</span> · variar estilos trabaja músculos que el crol no toca y rompe la monotonía.</div>` },
+        { name: "Pull final", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de 50 m a crol con pull-buoy entre los muslos, ritmo cómodo.</p>
+           <strong>Foco</strong>
+           <p>Brazada larga y relajada. Ya estás cansado, no fuerces.</p>` },
+        { name: "Vuelta a la calma", dist: 200, desc:
+          `<strong>Qué haces</strong>
+           <p>4 largos de crol muy suaves, respirando cada 3 brazadas (alternando lado).</p>` },
+      ]
+    },
+  },
+  phases: [
+    { name: "Adaptación", weeks: [1,2,3] },
+    { name: "Técnica", weeks: [4,5,6] },
+    { name: "Volumen", weeks: [7,8,9,10] },
+    { name: "Definición", weeks: [11,12] },
+  ],
+  dryExercises: {
+    movilidad: [
+      { name: "Estirar pecho en marco de puerta", reps: "30\" cada lado",
+        desc: `<strong>Cómo</strong>
+               <p>1. Ponte en el marco de una puerta.<br>
+                  2. Pon el antebrazo en el marco, codo a 90°, a la altura del hombro.<br>
+                  3. Da un pequeño paso adelante con la pierna del mismo lado.<br>
+                  4. Notarás un estiramiento en el pectoral. Aguanta 30 segundos.<br>
+                  5. Cambia de lado.</p>
+               <div class="tip"><span class="tip-label">Por qué</span> · contrarresta los hombros caídos hacia delante. Lo notarás muchísimo.</div>` },
+      { name: "Rotaciones de hombro con palo o toalla", reps: "2×10",
+        desc: `<strong>Cómo</strong>
+               <p>1. Coge un palo de escoba (o una toalla enrollada tensa).<br>
+                  2. Brazos estirados delante, agarre amplio (más ancho que los hombros).<br>
+                  3. Sin doblar los codos, lleva el palo por encima de la cabeza hasta la espalda baja.<br>
+                  4. Vuelve por el mismo camino. Eso es 1 repetición.<br>
+                  5. Haz 10. Descansa. Otras 10.</p>
+               <div class="tip"><span class="tip-label">Si no llegas</span> · agarre más ancho. Si sigue sin salir, no fuerces, ve mejorando con las semanas.</div>` },
+      { name: "Gato-vaca (cat-cow)", reps: "10 lentas",
+        desc: `<strong>Cómo</strong>
+               <p>1. Apóyate en el suelo a cuatro patas (manos bajo hombros, rodillas bajo caderas).<br>
+                  2. <b>Vaca:</b> deja caer la barriga, saca el pecho, mirada arriba.<br>
+                  3. <b>Gato:</b> redondea la espalda hacia el techo, mete la barbilla.<br>
+                  4. Alterna lentamente. 10 veces cada postura.</p>
+               <div class="tip"><span class="tip-label">Por qué</span> · moviliza toda la columna. Antídoto perfecto contra el día sentado.</div>` },
+      { name: "Wall angels (ángeles en la pared)", reps: "2×10",
+        desc: `<strong>Cómo</strong>
+               <p>1. De pie, espalda completamente pegada a la pared (cabeza, hombros, glúteos, talones — todo tocando).<br>
+                  2. Brazos en "W": codos doblados a la altura de los hombros, dorso de las manos pegado a la pared.<br>
+                  3. Sin despegar nada de la pared, sube los brazos hasta formar una "Y" (estirados arriba).<br>
+                  4. Vuelve a la "W". Eso es 1 repetición.</p>
+               <div class="tip"><span class="tip-label">Si las manos se despegan</span> · es normal al principio. Hazlo solo en el rango donde puedas mantener contacto. Mejorará.</div>` },
+    ],
+    fuerza: [
+      { name: "Flexiones (push-ups)", reps: "3×máx",
+        desc: `<strong>Cómo</strong>
+               <p>1. Manos en el suelo, justo más anchas que los hombros.<br>
+                  2. Cuerpo recto desde la cabeza hasta los talones (no levantes el culo).<br>
+                  3. Baja hasta que el pecho casi toque el suelo.<br>
+                  4. Sube empujando. Eso es 1 repetición.<br>
+                  5. Haz las máximas que puedas con buena técnica. Descansa 1 minuto. Repite 3 veces.</p>
+               <div class="tip"><span class="tip-label">Si no llegas a 8</span> · hazlas con las rodillas apoyadas en el suelo. Cuando llegues a 15 con rodillas, pasa a las normales.</div>` },
+      { name: "Remo invertido (o con banda elástica)", reps: "3×10–12",
+        desc: `<strong>Sin material – remo invertido</strong>
+               <p>1. Túmbate boca arriba debajo de una mesa robusta.<br>
+                  2. Agarra el borde de la mesa con las manos, brazos estirados.<br>
+                  3. Cuerpo recto, talones apoyados en el suelo.<br>
+                  4. Tira hacia arriba hasta que el pecho casi toque la mesa.<br>
+                  5. Baja despacio. 10-12 repeticiones, 3 series.</p>
+               <strong>Con banda elástica</strong>
+               <p>1. Banda enganchada a algo fijo a la altura del pecho.<br>
+                  2. Agarra los extremos, brazos estirados al frente.<br>
+                  3. Tira de la banda hacia ti, llevando los codos atrás y juntando los omoplatos.</p>
+               <div class="tip"><span class="tip-label">Por qué</span> · contrarresta las flexiones (que cierran hombros). Sin esto, te encorvas más.</div>` },
+      { name: "Plancha frontal", reps: "3×30–45\"",
+        desc: `<strong>Cómo</strong>
+               <p>1. Apóyate en el suelo sobre los antebrazos y las puntas de los pies.<br>
+                  2. Codos justo debajo de los hombros.<br>
+                  3. Cuerpo completamente recto: la línea de la cabeza-hombros-cadera-talones forma una sola línea.<br>
+                  4. Aprieta abdomen y glúteos.<br>
+                  5. Aguanta 30-45 segundos. Descansa 30 segundos. Repite 3 veces.</p>
+               <div class="tip"><span class="tip-label">Errores típicos</span> · culo subido (estás descansando) o cadera caída (te haces daño en la lumbar). Recto.</div>` },
+      { name: "Sentadillas al aire", reps: "3×15",
+        desc: `<strong>Cómo</strong>
+               <p>1. De pie, pies a la anchura de los hombros, puntas ligeramente hacia fuera.<br>
+                  2. Baja como si fueras a sentarte en una silla. Culo atrás, rodillas siguen la dirección de los pies.<br>
+                  3. Baja hasta que los muslos queden paralelos al suelo (o lo más bajo que puedas controlar).<br>
+                  4. Sube empujando con los talones. Eso es 1 repetición.<br>
+                  5. 15 repeticiones, 3 series.</p>
+               <div class="tip"><span class="tip-label">Brazos</span> · estirados delante para equilibrarte mientras bajas.</div>` },
+    ]
+  }
+};
+
+const DOW_NAMES = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const DOW_FULL = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+/* ============================================================
+   STATE & STORAGE
+============================================================ */
+let state = {
+  startDate: null,        // YYYY-MM-DD: first day of plan
+  logs: {},               // { 'YYYY-MM-DD': { done, distance, feel, notes, blocksDone:[idx] } }
+  selectedDate: null,     // YYYY-MM-DD currently viewed
+  calMonth: null,         // {year, month}
+  activeTab: 'hoy',
+  timer: { running:false, ms:0, started:null }
+};
+
+async function loadState(){
+  try{
+    const raw = localStorage.getItem('brazada_state');
+    if(raw){
+      state = { ...state, ...JSON.parse(raw) };
+    }
+  }catch(e){ /* fresh */ }
+
+  if(!state.startDate){
+    state.startDate = todayISO();
+    await saveState();
+  }
+  state.selectedDate = todayISO();
+  const t = new Date();
+  state.calMonth = { year: t.getFullYear(), month: t.getMonth() };
+}
+
+async function saveState(){
+  const persist = {
+    startDate: state.startDate,
+    logs: state.logs,
+  };
+  try{
+    localStorage.setItem('brazada_state', JSON.stringify(persist));
+  }catch(e){ console.error('save fail', e); }
+}
+
+/* ============================================================
+   DATE HELPERS
+============================================================ */
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){ return String(n).padStart(2,'0'); }
+function parseISO(s){
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+function isoOf(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function dayOfWeekMonFirst(d){
+  // returns 1..7 (Mon..Sun)
+  const js = d.getDay(); // 0=Sun..6=Sat
+  return js === 0 ? 7 : js;
+}
+function daysBetween(a, b){
+  const ms = parseISO(b) - parseISO(a);
+  return Math.round(ms / 86400000);
+}
+function weekNumber(date){
+  // weeks since startDate, 1-indexed
+  const diff = daysBetween(state.startDate, date);
+  return Math.floor(diff / 7) + 1;
+}
+function phaseFor(week){
+  for(const p of PLAN.phases){
+    if(p.weeks.includes(week)) return p.name;
+  }
+  return PLAN.phases[PLAN.phases.length-1].name; // beyond plan → Definición
+}
+function fmtDate(iso){
+  const d = parseISO(iso);
+  return DOW_FULL[d.getDay()] + ' ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
+}
+function fmtDateShort(iso){
+  const d = parseISO(iso);
+  return d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0,3);
+}
+
+/* ============================================================
+   STREAK & STATS
+============================================================ */
+function calcStreak(){
+  // count consecutive completed days back from today (skipping doesn't break if in future,
+  // but if past day not completed → streak ends)
+  let streak = 0;
+  let cursor = new Date();
+  // start from today; if today not done, start from yesterday
+  const t = todayISO();
+  if(!isDone(t)){
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  while(true){
+    const iso = isoOf(cursor);
+    if(parseISO(iso) < parseISO(state.startDate)) break;
+    if(isDone(iso)){
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+function isDone(iso){
+  return state.logs[iso] && state.logs[iso].done === true;
+}
+function totalDistance(){
+  let sum = 0;
+  for(const iso in state.logs){
+    if(state.logs[iso].done) sum += (state.logs[iso].distance || 0);
+  }
+  return sum;
+}
+function sessionsCompleted(){
+  return Object.values(state.logs).filter(l => l.done).length;
+}
+function weekDistance(weekStartISO){
+  // sum 7 days starting at weekStartISO
+  let sum = 0;
+  const d = parseISO(weekStartISO);
+  for(let i=0;i<7;i++){
+    const iso = isoOf(d);
+    if(state.logs[iso] && state.logs[iso].done){
+      sum += state.logs[iso].distance || 0;
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return sum;
+}
+function getMondayOf(iso){
+  const d = parseISO(iso);
+  const dow = d.getDay() || 7;
+  d.setDate(d.getDate() - (dow - 1));
+  return isoOf(d);
+}
+
+/* ============================================================
+   RENDERING
+============================================================ */
+const $content = document.getElementById('content');
+const $tabs = document.getElementById('tabs');
+const $topDate = document.getElementById('topDate');
+
+function setTab(name){
+  if(state.activeTab === name) return; // avoid redundant re-render
+  state.activeTab = name;
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  render();
+}
+
+$tabs.addEventListener('click', e=>{
+  if(e.target.classList.contains('tab')){
+    setTab(e.target.dataset.tab);
+  }
+});
+
+function updateTopDate(){
+  const d = new Date();
+  $topDate.textContent = DOW_NAMES[d.getDay()].toUpperCase() + ' · ' + d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0,3);
+}
+
+/* --------- TAB: HOY --------- */
+function renderHoy(){
+  const iso = state.selectedDate || todayISO();
+  const d = parseISO(iso);
+  const dow = dayOfWeekMonFirst(d);
+  const session = PLAN.sessions[dow];
+  const week = weekNumber(iso);
+  const phase = phaseFor(week);
+  const log = state.logs[iso] || { blocksDone: [] };
+  const isToday = iso === todayISO();
+
+  // Day picker (current week)
+  const monday = getMondayOf(iso);
+  const mondayD = parseISO(monday);
+  let dayPickerHTML = '<div class="day-picker">';
+  for(let i=0;i<7;i++){
+    const dd = new Date(mondayD);
+    dd.setDate(mondayD.getDate()+i);
+    const ddIso = isoOf(dd);
+    const cls = (ddIso===iso?' active':'') + (isDone(ddIso)?' done':'');
+    dayPickerHTML += `<button class="day-pick${cls}" data-iso="${ddIso}">
+      <div class="dp-dow">${DOW_NAMES[dd.getDay()]}</div>
+      <div class="dp-num">${dd.getDate()}</div>
+    </button>`;
+  }
+  dayPickerHTML += '</div>';
+
+  let html = dayPickerHTML;
+
+  // HERO
+  const blocksDone = (log.blocksDone || []).length;
+  const allDone = blocksDone === session.blocks.length;
+  const heroSub = log.done ? 'Sesión completada' :
+                  blocksDone > 0 ? `${blocksDone} de ${session.blocks.length} bloques hechos` :
+                  isToday ? 'Lo que toca hoy' : (parseISO(iso) < parseISO(todayISO()) ? 'Sesión pasada' : 'Sesión planificada');
+
+  html += `<div class="hero">
+    <div class="hero-meta">
+      <div class="hero-day">Sem ${week} · ${DOW_FULL[d.getDay()]}</div>
+      <div class="phase-chip">${phase}</div>
+    </div>
+    <h1 class="hero-title">${session.name.split(' ')[0]} <em>${session.name.split(' ').slice(1).join(' ')||''}</em></h1>
+    <div class="hero-sub">${heroSub}</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="v">${session.total}<span style="font-size:14px;color:var(--foam);opacity:0.6;"> m</span></div><div class="l">Distancia</div></div>
+      <div class="hero-stat"><div class="v">${session.blocks.length}</div><div class="l">Bloques</div></div>
+      <div class="hero-stat"><div class="v">${session.stroke.split(' ')[0]}</div><div class="l">Estilo</div></div>
+    </div>
+  </div>`;
+
+  // BLOCKS
+  html += `<section class="section">
+    <h3 class="section-title"><span>La sesión</span><span id="blocksCounter" style="color:${allDone?'var(--coral)':'var(--muted)'};">${blocksDone}/${session.blocks.length}</span></h3>
+    <div class="blocks">`;
+  session.blocks.forEach((b, i)=>{
+    const done = (log.blocksDone || []).includes(i);
+    html += `<div class="block ${done?'done':''}" id="block-${i}" data-block="${i}" data-iso="${iso}">
+      <div class="block-row" data-action="toggle-expand">
+        <div class="block-main">
+          <div class="block-head">
+            <div class="block-name">
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+              ${b.name}
+            </div>
+            <div class="block-dist">${b.dist} m</div>
+          </div>
+        </div>
+        <button class="check-btn" data-action="toggle-done" aria-label="Marcar hecho">
+          <span class="tick"></span>
+        </button>
+      </div>
+      <div class="block-desc">${b.desc}</div>
+    </div>`;
+  });
+  html += `</div>
+    <div class="actions">
+      <button class="btn btn-primary btn-full" data-action="complete" data-iso="${iso}">
+        ${log.done ? 'Editar registro' : 'Marcar sesión hecha'}
+      </button>
+      ${log.done ? '' : `<button class="btn btn-secondary btn-full" data-action="skip" data-iso="${iso}">No pude hoy</button>`}
+    </div>
+  </section>`;
+
+  // Quick stats
+  html += `<section class="section">
+    <h3 class="section-title">De un vistazo</h3>
+    <div class="stat-grid">
+      <div class="stat-card flame">
+        <div class="stat-label">Racha</div>
+        <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Esta semana</div>
+        <div class="stat-value">${(weekDistance(monday)/1000).toFixed(1)}<span class="unit">km</span></div>
+      </div>
+    </div>
+  </section>`;
+
+  $content.innerHTML = html;
+
+  // Wire interactions
+  document.querySelectorAll('.day-pick').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.selectedDate = el.dataset.iso;
+      renderHoy();
+    });
+  });
+  document.querySelectorAll('.block').forEach(el=>{
+    const blockIdx = parseInt(el.dataset.block);
+    const blockIso = el.dataset.iso;
+    const row = el.querySelector('.block-row');
+    const checkBtn = el.querySelector('.check-btn');
+
+    // Tap on the row → expand/collapse description
+    row.addEventListener('click', (e)=>{
+      // ignore if check button was the actual target
+      if(e.target.closest('.check-btn')) return;
+      el.classList.toggle('expanded');
+    });
+
+    // Tap on check → toggle done (in-place, no full re-render)
+    checkBtn.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      await toggleBlockDone(blockIso, blockIdx, el);
+    });
+  });
+  document.querySelectorAll('[data-action="complete"]').forEach(el=>{
+    el.addEventListener('click', ()=>openCompleteModal(el.dataset.iso));
+  });
+  document.querySelectorAll('[data-action="skip"]').forEach(el=>{
+    el.addEventListener('click', ()=>markSkipped(el.dataset.iso));
+  });
+}
+
+async function toggleBlockDone(iso, idx, blockEl){
+  if(!state.logs[iso]) state.logs[iso] = { blocksDone: [] };
+  if(!state.logs[iso].blocksDone) state.logs[iso].blocksDone = [];
+  const arr = state.logs[iso].blocksDone;
+  const pos = arr.indexOf(idx);
+  if(pos>=0) arr.splice(pos,1); else arr.push(idx);
+
+  // In-place visual update (no full re-render)
+  if(blockEl){
+    blockEl.classList.toggle('done', arr.includes(idx));
+  }
+  // Update counter
+  const session = PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))];
+  const counter = document.getElementById('blocksCounter');
+  if(counter){
+    counter.textContent = `${arr.length}/${session.blocks.length}`;
+    counter.style.color = arr.length === session.blocks.length ? 'var(--coral)' : 'var(--muted)';
+  }
+
+  // Save in background — don't await before visual feedback
+  saveState();
+}
+
+async function markSkipped(iso){
+  state.logs[iso] = { ...(state.logs[iso] || {}), done:false, skipped:true };
+  await saveState();
+  toast('Día marcado como no realizado');
+  renderHoy();
+}
+
+/* --------- MODAL: complete session --------- */
+function openCompleteModal(iso){
+  const session = PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))];
+  const existing = state.logs[iso] || {};
+  const html = `
+    <div class="modal-bg" id="modalBg">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <h3>Registrar ${fmtDateShort(iso)}</h3>
+
+        <div class="field">
+          <label>Distancia real (m)</label>
+          <input type="number" id="fDist" inputmode="numeric" placeholder="${session.total}" value="${existing.distance ?? ''}">
+        </div>
+
+        <div class="field">
+          <label>¿Cómo te sentiste?</label>
+          <div class="feel-row" id="feelRow">
+            <button class="feel-btn ${existing.feel===1?'selected':''}" data-feel="1" title="Muy duro">😣</button>
+            <button class="feel-btn ${existing.feel===2?'selected':''}" data-feel="2" title="Duro">😮‍💨</button>
+            <button class="feel-btn ${existing.feel===3?'selected':''}" data-feel="3" title="OK">🙂</button>
+            <button class="feel-btn ${existing.feel===4?'selected':''}" data-feel="4" title="Bien">😊</button>
+            <button class="feel-btn ${existing.feel===5?'selected':''}" data-feel="5" title="Volando">🔥</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Notas (opcional)</label>
+          <textarea id="fNotes" placeholder="Sensaciones, técnica, lo que quieras...">${existing.notes || ''}</textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="btnCancel">Cancelar</button>
+          <button class="btn btn-primary" id="btnSave">Guardar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalRoot').innerHTML = html;
+
+  let pickedFeel = existing.feel || null;
+  document.querySelectorAll('.feel-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      pickedFeel = parseInt(b.dataset.feel);
+      document.querySelectorAll('.feel-btn').forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+    });
+  });
+  document.getElementById('modalBg').addEventListener('click', closeModal);
+  document.getElementById('btnCancel').addEventListener('click', closeModal);
+  document.getElementById('btnSave').addEventListener('click', async ()=>{
+    const distVal = parseInt(document.getElementById('fDist').value) || session.total;
+    const notes = document.getElementById('fNotes').value.trim();
+    state.logs[iso] = {
+      ...(state.logs[iso] || {}),
+      done: true,
+      skipped: false,
+      distance: distVal,
+      feel: pickedFeel,
+      notes: notes,
+      blocksDone: PLAN.sessions[dayOfWeekMonFirst(parseISO(iso))].blocks.map((_,i)=>i)
+    };
+    await saveState();
+    closeModal();
+    toast('¡Sesión registrada! 🏊');
+    render();
+  });
+}
+function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
+
+/* --------- TAB: SEMANA (calendar) --------- */
+function renderSemana(){
+  const cm = state.calMonth;
+  const first = new Date(cm.year, cm.month, 1);
+  const startOffset = (first.getDay() || 7) - 1; // Mon=0
+  const lastDay = new Date(cm.year, cm.month+1, 0).getDate();
+  const todayIso = todayISO();
+
+  let cells = '';
+  const dows = ['L','M','X','J','V','S','D'];
+  dows.forEach(d=> cells += `<div class="cal-dow">${d}</div>`);
+  for(let i=0;i<startOffset;i++) cells += `<div class="cal-day empty"></div>`;
+  for(let day=1; day<=lastDay; day++){
+    const dIso = cm.year+'-'+pad(cm.month+1)+'-'+pad(day);
+    const isToday = dIso === todayIso;
+    const isFuture = parseISO(dIso) > parseISO(todayIso);
+    const log = state.logs[dIso];
+    const cls = ['cal-day'];
+    if(isFuture) cls.push('future');
+    if(isToday) cls.push('today');
+    if(log && log.done) cls.push('done');
+    if(log && log.skipped && !log.done) cls.push('skipped');
+    cells += `<div class="${cls.join(' ')}" data-iso="${dIso}">${day}</div>`;
+  }
+
+  let html = `<section class="section">
+    <div class="calendar">
+      <div class="cal-head">
+        <div class="cal-title">${MONTHS[cm.month]} ${cm.year}</div>
+        <div class="cal-nav">
+          <button id="prevMo">‹</button>
+          <button id="nextMo">›</button>
+        </div>
+      </div>
+      <div class="cal-grid">${cells}</div>
+    </div>
+  </section>`;
+
+  // Stats for the month
+  let monthDist = 0, monthSess = 0;
+  for(const iso in state.logs){
+    const d = parseISO(iso);
+    if(d.getFullYear()===cm.year && d.getMonth()===cm.month && state.logs[iso].done){
+      monthSess++;
+      monthDist += state.logs[iso].distance || 0;
+    }
+  }
+
+  html += `<section class="section">
+    <h3 class="section-title">Resumen del mes</h3>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Sesiones</div>
+        <div class="stat-value">${monthSess}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Distancia</div>
+        <div class="stat-value">${(monthDist/1000).toFixed(1)}<span class="unit">km</span></div>
+      </div>
+    </div>
+  </section>`;
+
+  $content.innerHTML = html;
+
+  document.getElementById('prevMo').onclick = ()=>{
+    cm.month--;
+    if(cm.month<0){cm.month=11;cm.year--;}
+    renderSemana();
+  };
+  document.getElementById('nextMo').onclick = ()=>{
+    cm.month++;
+    if(cm.month>11){cm.month=0;cm.year++;}
+    renderSemana();
+  };
+  document.querySelectorAll('.cal-day:not(.empty)').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.selectedDate = el.dataset.iso;
+      setTab('hoy');
+    });
+  });
+}
+
+/* --------- TAB: HISTORIAL --------- */
+function renderHistorial(){
+  const entries = Object.entries(state.logs)
+    .filter(([_,l]) => l.done || l.skipped)
+    .sort((a,b)=> b[0].localeCompare(a[0]));
+
+  let html = `<section class="section">
+    <h3 class="section-title">Tus sesiones</h3>`;
+
+  if(entries.length === 0){
+    html += `<div class="log-list"><div class="log-empty">
+      <span class="big">Todavía no hay registros</span>
+      Cuando completes tu primera sesión aparecerá aquí.
+    </div></div>`;
+  } else {
+    html += `<div class="log-list">`;
+    const feels = ['','😣','😮‍💨','🙂','😊','🔥'];
+    entries.forEach(([iso, log])=>{
+      const d = parseISO(iso);
+      const session = PLAN.sessions[dayOfWeekMonFirst(d)];
+      if(log.skipped && !log.done){
+        html += `<div class="log-item">
+          <div class="log-row">
+            <div class="log-date">${fmtDateShort(iso)}</div>
+            <div class="log-meta" style="color:var(--coral);">No realizada</div>
+          </div>
+          <div class="muted" style="font-size:12px;">${session.name}</div>
+        </div>`;
+      } else {
+        html += `<div class="log-item">
+          <div class="log-row">
+            <div class="log-date">${fmtDateShort(iso)}</div>
+            <div class="log-meta">
+              <span class="log-dist">${log.distance || 0} m</span>
+              ${log.feel ? `<span class="log-feel">${feels[log.feel]}</span>` : ''}
+            </div>
+          </div>
+          <div class="muted" style="font-size:12px;">${session.name}</div>
+          ${log.notes ? `<div class="log-notes">"${escapeHtml(log.notes)}"</div>` : ''}
+        </div>`;
+      }
+    });
+    html += `</div>`;
+  }
+  html += `</section>`;
+  $content.innerHTML = html;
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+/* --------- TAB: PROGRESO --------- */
+function renderProgreso(){
+  // 4 weeks bar chart
+  const weeks = [];
+  for(let i=3;i>=0;i--){
+    const monday = new Date();
+    const dow = monday.getDay() || 7;
+    monday.setDate(monday.getDate() - (dow-1) - i*7);
+    const iso = isoOf(monday);
+    weeks.push({ iso, dist: weekDistance(iso), label: 'S-'+i });
+  }
+  weeks[3].label = 'Esta sem';
+  const maxDist = Math.max(...weeks.map(w=>w.dist), 1000);
+
+  let bars = '';
+  weeks.forEach(w=>{
+    const h = w.dist === 0 ? 3 : Math.max(3, (w.dist/maxDist)*100);
+    bars += `<div class="chart-col">
+      <div class="chart-bar ${w.dist===0?'zero':''}" style="height:${h}%;"></div>
+      <div class="chart-label">${w.label}</div>
+    </div>`;
+  });
+
+  const td = todayISO();
+  const week = weekNumber(td);
+  const phase = phaseFor(week);
+  const total = totalDistance();
+  const sessions = sessionsCompleted();
+  const phaseObj = PLAN.phases.find(p=>p.weeks.includes(week)) || PLAN.phases[PLAN.phases.length-1];
+  const phaseProgress = ((week - phaseObj.weeks[0]) / phaseObj.weeks.length) * 100;
+
+  let html = `<section class="section">
+    <h3 class="section-title">Tu progreso</h3>
+
+    <div class="stat-grid">
+      <div class="stat-card featured">
+        <div class="stat-label">Fase actual</div>
+        <div class="stat-value" style="font-size:26px;">${phase}</div>
+        <div class="stat-sub">Semana ${week} del plan · ${phaseObj.weeks.length} sem en esta fase</div>
+        <div style="height:6px;background:rgba(7,42,54,0.1);border-radius:999px;margin-top:12px;overflow:hidden;">
+          <div style="height:100%;width:${Math.min(100, Math.max(0, phaseProgress))}%;background:var(--abyss);border-radius:999px;"></div>
+        </div>
+      </div>
+      <div class="stat-card flame">
+        <div class="stat-label">Racha</div>
+        <div class="stat-value">${calcStreak()}<span class="unit">días</span></div>
+        <div class="stat-sub">Días seguidos cumpliendo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total nadado</div>
+        <div class="stat-value">${(total/1000).toFixed(1)}<span class="unit">km</span></div>
+        <div class="stat-sub">${sessions} sesiones</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3 class="section-title">Distancia por semana</h3>
+    <div class="chart">
+      <div class="chart-title">Últimas 4 semanas</div>
+      <div class="chart-bars">${bars}</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3 class="section-title">Hitos</h3>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Próximo hito</div>
+        <div class="stat-value" style="font-size:22px;">${nextMilestone(total)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Sesiones</div>
+        <div class="stat-value">${sessions}<span class="unit">de ∞</span></div>
+      </div>
+    </div>
+  </section>`;
+
+  $content.innerHTML = html;
+}
+function nextMilestone(total){
+  const mil = [5000,10000,25000,50000,100000];
+  for(const m of mil){
+    if(total < m) return `${m/1000} km`;
+  }
+  return `${Math.ceil(total/100000)*100} km`;
+}
+
+/* --------- TAB: EN SECO --------- */
+function renderSeco(){
+  // Always re-read TODAY (not cached) so it auto-resets each day
+  const today = todayISO();
+  const todayLog = state.logs[today] || {};
+  const dryDone = todayLog.dryDone || [];
+
+  const todayD = new Date();
+  const niceDate = DOW_FULL[todayD.getDay()] + ', ' + todayD.getDate() + ' ' + MONTHS[todayD.getMonth()];
+
+  const renderDryItem = (ex, key, done) => `
+    <div class="dry-item ${done?'done':''}" id="dry-${key}">
+      <div class="dry-row" data-action="toggle-expand" data-key="${key}">
+        <button class="dry-check" data-action="toggle-done" data-key="${key}" aria-label="Marcar hecho">
+          <span class="tick"></span>
+        </button>
+        <div class="dry-name">
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+          ${ex.name}
+        </div>
+        <div class="dry-reps">${ex.reps}</div>
+      </div>
+      <div class="dry-desc">${ex.desc || ''}</div>
+    </div>`;
+
+  let html = `<section class="section">
+    <p class="muted" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;padding:0 6px 8px;color:var(--muted);">${niceDate}</p>
+    <h3 class="section-title">Movilidad <span class="muted" style="font-size:11px;">3–4 min · diario</span></h3>
+    <div class="dry-list">`;
+  PLAN.dryExercises.movilidad.forEach((ex, i)=>{
+    const key = 'mov_'+i;
+    html += renderDryItem(ex, key, dryDone.includes(key));
+  });
+  html += `</div>
+  </section>
+
+  <section class="section">
+    <h3 class="section-title">Fuerza <span class="muted" style="font-size:11px;">5–7 min · L/X/V</span></h3>
+    <div class="dry-list">`;
+  PLAN.dryExercises.fuerza.forEach((ex, i)=>{
+    const key = 'fue_'+i;
+    html += renderDryItem(ex, key, dryDone.includes(key));
+  });
+  html += `</div>
+  </section>
+
+  <section class="section">
+    <p class="muted center" style="font-size:13px;padding:0 14px;">Toca cualquier ejercicio para ver cómo hacerlo. El círculo de la izquierda lo marca como hecho.<br><br>Las marcas se reinician cada día.</p>
+  </section>`;
+
+  $content.innerHTML = html;
+
+  // Tap on row → expand description
+  document.querySelectorAll('.dry-row').forEach(row=>{
+    row.addEventListener('click', (e)=>{
+      if(e.target.closest('.dry-check')) return;
+      const item = row.parentElement;
+      item.classList.toggle('expanded');
+    });
+  });
+
+  // Tap on check button → toggle done (in-place)
+  document.querySelectorAll('.dry-check').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      toggleDry(btn.dataset.key, btn.closest('.dry-item'));
+    });
+  });
+}
+
+async function toggleDry(key, itemEl){
+  // Always use TODAY's date (auto-reset behavior)
+  const today = todayISO();
+  if(!state.logs[today]) state.logs[today] = {};
+  if(!state.logs[today].dryDone) state.logs[today].dryDone = [];
+  const arr = state.logs[today].dryDone;
+  const pos = arr.indexOf(key);
+  if(pos>=0) arr.splice(pos,1); else arr.push(key);
+
+  // In-place visual update (instant, no re-render)
+  if(itemEl){
+    itemEl.classList.toggle('done', arr.includes(key));
+  }
+  // Save in background
+  saveState();
+}
+
+/* --------- TAB: CRONÓMETRO 400 m --------- */
+let timerInterval = null;
+let cachedTests = null; // loaded once per render
+
+async function loadTests(){
+  try{
+    const raw = localStorage.getItem('brazada_tests400');
+    if(raw) return JSON.parse(raw);
+  }catch(e){ /* none yet */ }
+  return [];
+}
+async function saveTests(tests){
+  try{
+    localStorage.setItem('brazada_tests400', JSON.stringify(tests));
+  }catch(e){ console.error('save tests failed', e); }
+}
+
+async function renderCronometro(){
+  const t = state.timer;
+  const elapsed = t.running ? (Date.now() - t.started) : t.ms;
+  const display = formatTime(elapsed);
+
+  cachedTests = await loadTests();
+  const tests = cachedTests;
+
+  let testList = '';
+  if(tests.length === 0){
+    testList = `<div class="log-empty"><span class="big">Sin tests todavía</span>Mide tu 400 m crol cada 4 semanas</div>`;
+  } else {
+    // Sort by date asc to compute deltas, then show desc
+    const sorted = [...tests].sort((a,b)=> (a.ms||0)===(b.ms||0)? a.date.localeCompare(b.date) : 0);
+    const byDate = [...tests].sort((a,b)=> a.date.localeCompare(b.date));
+    byDate.forEach((test, i)=>{
+      test._delta = (i>0) ? (test.ms - byDate[i-1].ms) : null;
+    });
+    const reverse = [...byDate].reverse();
+    reverse.forEach((test, idx)=>{
+      let deltaHtml = '';
+      if(test._delta !== null){
+        const sign = test._delta < 0 ? '−' : '+';
+        const abs = Math.abs(test._delta);
+        const color = test._delta < 0 ? 'var(--coral)' : 'var(--muted)';
+        deltaHtml = `<div style="font-size:11px;color:${color};font-weight:600;margin-top:2px;">${sign}${formatTime(abs)} vs anterior</div>`;
+      }
+      testList += `<div class="log-item">
+        <div class="log-row">
+          <div>
+            <div class="log-date">${fmtDateShort(test.date)}</div>
+            ${deltaHtml}
+          </div>
+          <div class="log-meta" style="align-items:center;gap:14px;">
+            <span class="log-dist" style="font-size:18px;">${test.time}</span>
+            <button class="del-test" data-test-id="${test.id || test.date+'_'+test.ms}" aria-label="Borrar" title="Borrar"
+              style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 6px;line-height:1;">×</button>
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+
+  const html = `<section class="section">
+    <div class="timer-card">
+      <div class="hero-day" style="color:var(--foam);opacity:0.7;">Test 400 m crol</div>
+      <div class="timer-display">${display}</div>
+      <div class="timer-btns">
+        ${t.running
+          ? `<button class="timer-btn" id="btnStop">Parar</button>`
+          : `<button class="timer-btn" id="btnStart">${t.ms>0?'Continuar':'Empezar'}</button>`
+        }
+        ${t.ms>0 && !t.running ? `<button class="timer-btn" id="btnSaveTime">Guardar</button>` : ''}
+        ${t.ms>0 ? `<button class="timer-btn" id="btnReset">Reset</button>` : ''}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <button class="btn btn-secondary btn-full" id="btnManual" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Introducir tiempo manualmente
+    </button>
+    <p class="muted center" style="font-size:12px;margin-top:8px;">Para cuando te cronometras con tu reloj</p>
+  </section>
+
+  <section class="section">
+    <h3 class="section-title">Historial de tests</h3>
+    <div class="log-list">${testList}</div>
+    <p class="muted center" style="font-size:13px;margin-top:14px;">Recomendado: cada 4 semanas, mismo ritmo de ejecución (400 m crol continuos).</p>
+  </section>`;
+
+  $content.innerHTML = html;
+
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+
+  const startBtn = document.getElementById('btnStart');
+  const stopBtn = document.getElementById('btnStop');
+  const resetBtn = document.getElementById('btnReset');
+  const saveBtn = document.getElementById('btnSaveTime');
+  const manualBtn = document.getElementById('btnManual');
+
+  if(startBtn) startBtn.onclick = ()=>{
+    state.timer.running = true;
+    state.timer.started = Date.now() - state.timer.ms;
+    startTimerLoop();
+    renderCronometro();
+  };
+  if(stopBtn) stopBtn.onclick = ()=>{
+    state.timer.ms = Date.now() - state.timer.started;
+    state.timer.running = false;
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    renderCronometro();
+  };
+  if(resetBtn) resetBtn.onclick = ()=>{
+    state.timer = { running:false, ms:0, started:null };
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+    renderCronometro();
+  };
+  if(saveBtn) saveBtn.onclick = async ()=>{
+    const all = await loadTests();
+    all.push({
+      id: 't_'+Date.now(),
+      date: todayISO(),
+      time: formatTime(state.timer.ms),
+      ms: state.timer.ms,
+      source: 'cronometro'
+    });
+    await saveTests(all);
+    state.timer = { running:false, ms:0, started:null };
+    toast('Tiempo guardado');
+    renderCronometro();
+  };
+  if(manualBtn) manualBtn.onclick = ()=> openManualModal();
+
+  // Delete buttons
+  document.querySelectorAll('.del-test').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      if(!confirm('¿Borrar este tiempo?')) return;
+      const id = btn.dataset.testId;
+      const all = await loadTests();
+      const filtered = all.filter(t => (t.id || t.date+'_'+t.ms) !== id);
+      await saveTests(filtered);
+      toast('Tiempo borrado');
+      renderCronometro();
+    });
+  });
+
+  if(state.timer.running) startTimerLoop();
+}
+
+/* --------- MANUAL TIME ENTRY MODAL --------- */
+function openManualModal(){
+  const todayIso = todayISO();
+  const html = `
+    <div class="modal-bg" id="modalBg">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <h3>Introducir tiempo</h3>
+
+        <div class="field">
+          <label>Fecha</label>
+          <input type="date" id="mDate" value="${todayIso}" max="${todayIso}"
+            style="width:100%;background:white;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--ink);">
+        </div>
+
+        <div class="field">
+          <label>Tu tiempo de 400 m</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="mMin" inputmode="numeric" placeholder="MM" min="0" max="59" maxlength="2"
+              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+            <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">:</span>
+            <input type="number" id="mSec" inputmode="numeric" placeholder="SS" min="0" max="59" maxlength="2"
+              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+            <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">.</span>
+            <input type="number" id="mCs" inputmode="numeric" placeholder="CC" min="0" max="99" maxlength="2"
+              style="flex:1;text-align:center;background:white;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
+          </div>
+          <p class="muted" style="font-size:12px;margin-top:8px;">Min : Seg . Centésimas (centésimas opcional)</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" id="btnCancelM">Cancelar</button>
+          <button class="btn btn-primary" id="btnSaveM">Guardar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('modalRoot').innerHTML = html;
+
+  // Auto-advance focus
+  const minI = document.getElementById('mMin');
+  const secI = document.getElementById('mSec');
+  const csI = document.getElementById('mCs');
+  setTimeout(()=>minI.focus(), 100);
+  minI.addEventListener('input', ()=>{
+    if(minI.value.length >= 2) secI.focus();
+  });
+  secI.addEventListener('input', ()=>{
+    if(secI.value.length >= 2) csI.focus();
+  });
+
+  document.getElementById('modalBg').addEventListener('click', closeModal);
+  document.getElementById('btnCancelM').onclick = closeModal;
+  document.getElementById('btnSaveM').onclick = async ()=>{
+    const min = parseInt(minI.value) || 0;
+    const sec = parseInt(secI.value) || 0;
+    const cs = parseInt(csI.value) || 0;
+    const date = document.getElementById('mDate').value || todayISO();
+
+    if(min === 0 && sec === 0){
+      toast('Introduce un tiempo válido');
+      return;
+    }
+    if(sec >= 60){
+      toast('Los segundos deben ser 0–59');
+      return;
+    }
+
+    const ms = (min * 60 * 1000) + (sec * 1000) + (cs * 10);
+    const all = await loadTests();
+    all.push({
+      id: 't_'+Date.now(),
+      date,
+      time: formatTime(ms),
+      ms,
+      source: 'manual'
+    });
+    await saveTests(all);
+    closeModal();
+    toast('Tiempo guardado 🏊');
+    renderCronometro();
+  };
+}
+function startTimerLoop(){
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    const display = document.querySelector('.timer-display');
+    if(display && state.timer.running){
+      display.textContent = formatTime(Date.now() - state.timer.started);
+    }
+  }, 100);
+}
+function formatTime(ms){
+  const total = Math.floor(ms/1000);
+  const m = Math.floor(total/60);
+  const s = total % 60;
+  const cs = Math.floor((ms % 1000)/10);
+  return pad(m)+':'+pad(s)+'.'+pad(cs);
+}
+
+/* --------- TOAST --------- */
+function toast(msg){
+  const root = document.getElementById('toastRoot');
+  root.innerHTML = `<div class="toast">${msg}</div>`;
+  setTimeout(()=>{ root.innerHTML = ''; }, 2200);
+}
+
+/* --------- ROUTER --------- */
+function render(){
+  updateTopDate();
+  switch(state.activeTab){
+    case 'hoy': renderHoy(); break;
+    case 'semana': renderSemana(); break;
+    case 'historial': renderHistorial(); break;
+    case 'progreso': renderProgreso(); break;
+    case 'seco': renderSeco(); break;
+    case 'cronometro': renderCronometro(); break;
+  }
+}
+
+/* --------- INIT --------- */
+(async ()=>{
+  await loadState();
+  render();
+})();
+
+/* --------- SERVICE WORKER (offline support) --------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch((err) => {
+      console.warn('SW registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
