@@ -268,6 +268,198 @@ body{
   opacity:0.55;
 }
 
+/* ---------- DAILY WELCOME SCREEN (once per day) ---------- */
+.daily-screen{
+  position:fixed;
+  inset:0;
+  z-index:9997;
+  background:linear-gradient(165deg, #072a36 0%, #0a3d4a 50%, #0e5b6f 100%);
+  color:#fbf7ef;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  padding:env(safe-area-inset-top) 32px env(safe-area-inset-bottom);
+  overflow:hidden;
+  animation:fadeIn .5s ease-out;
+}
+.daily-screen.exiting{animation:fadeOut .35s ease-in forwards;}
+.daily-glow{
+  position:absolute;
+  width:520px;
+  height:520px;
+  border-radius:50%;
+  pointer-events:none;
+  animation:glowPulse 5s ease-in-out infinite;
+}
+.daily-glow.tl{
+  top:-180px; left:-180px;
+  background:radial-gradient(circle, rgba(168,216,222,0.20) 0%, transparent 60%);
+}
+.daily-glow.br{
+  bottom:-180px; right:-180px;
+  background:radial-gradient(circle, rgba(232,117,89,0.18) 0%, transparent 60%);
+  animation-delay:1.8s;
+}
+.daily-top{
+  width:100%;
+  padding-top:50px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+.daily-eyebrow{
+  font-family:'Inter Tight', sans-serif;
+  font-size:11px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:#a8d8de;
+  font-weight:600;
+  opacity:0.85;
+  animation:slideDown .7s ease-out .15s both;
+}
+.daily-date{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-size:15px;
+  font-weight:400;
+  color:#a8d8de;
+  opacity:0.7;
+  margin-top:6px;
+  text-transform:capitalize;
+  animation:slideDown .7s ease-out .25s both;
+}
+.daily-center{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:380px;
+  margin:0 auto;
+}
+.daily-quote{
+  font-family:'Fraunces', serif;
+  font-style:italic;
+  font-weight:400;
+  font-size:30px;
+  line-height:1.2;
+  letter-spacing:-0.02em;
+  margin-bottom:6px;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .4s both;
+}
+.daily-quote::before{
+  content:'\201C';
+  display:block;
+  font-size:60px;
+  line-height:0.4;
+  color:#e87559;
+  opacity:0.8;
+  margin-bottom:16px;
+}
+.daily-divider{
+  width:36px;
+  height:1px;
+  background:#a8d8de;
+  opacity:0.35;
+  margin:24px auto 22px;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .55s both;
+}
+.daily-session-label{
+  font-family:'Inter Tight', sans-serif;
+  font-size:10px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:#a8d8de;
+  opacity:0.7;
+  margin-bottom:8px;
+  font-weight:600;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .65s both;
+}
+.daily-session-name{
+  font-family:'Fraunces', serif;
+  font-weight:500;
+  font-size:24px;
+  letter-spacing:-0.01em;
+  margin-bottom:18px;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .7s both;
+}
+.daily-session-name em{
+  font-style:italic;
+  color:#a8d8de;
+  font-weight:400;
+}
+.daily-stats{
+  display:flex;
+  gap:24px;
+  justify-content:center;
+  padding:16px 0 0;
+  border-top:1px solid rgba(168,216,222,0.18);
+  width:80%;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .8s both;
+}
+.daily-stat{
+  text-align:center;
+}
+.daily-stat .v{
+  font-family:'Fraunces', serif;
+  font-size:24px;
+  font-weight:400;
+  letter-spacing:-0.02em;
+  color:#fbf7ef;
+}
+.daily-stat .l{
+  font-size:9px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:#a8d8de;
+  opacity:0.7;
+  font-weight:600;
+  margin-top:4px;
+}
+.daily-bottom{
+  width:100%;
+  padding-bottom:24px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  animation:welcomeRise 1s cubic-bezier(0.2, 0.9, 0.3, 1) .95s both;
+}
+.daily-cta{
+  background:#e87559;
+  color:#fbf7ef;
+  border:none;
+  border-radius:18px;
+  padding:18px 28px;
+  font-family:'Inter Tight', sans-serif;
+  font-size:16px;
+  font-weight:500;
+  letter-spacing:0.02em;
+  cursor:pointer;
+  width:100%;
+  max-width:340px;
+  box-shadow:0 8px 24px rgba(232,117,89,0.3);
+  transition:transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.daily-cta:active{
+  transform:translateY(1px) scale(0.99);
+  box-shadow:0 4px 14px rgba(232,117,89,0.25);
+}
+.daily-cta.rest{
+  background:rgba(168,216,222,0.18);
+  border:1px solid rgba(168,216,222,0.35);
+  backdrop-filter:blur(8px);
+  box-shadow:none;
+}
+.daily-cta.rest:active{
+  background:rgba(168,216,222,0.28);
+}
+
 /* ---------- MILESTONE CELEBRATION SCREEN ---------- */
 .milestone-screen{
   position:fixed;
@@ -2475,18 +2667,6 @@ function dayOfWeekMonFirst(d){
 }
 
 /**
- * Returns which session (1..7 in PLAN.sessions) corresponds to a given date,
- * applying the queue-shifting logic for weekdays:
- *
- * - Saturdays (dow=6) and Sundays (dow=7) are FIXED: they always show their
- *   own long session (sessions 6 and 7).
- * - Monday→Friday (dow=1..5) form a queue of 5 short sessions per ISO-week.
- *   The queue starts at session 1 each Monday. If a weekday is marked as
- *   skipped, that day's session is NOT consumed and rolls forward to the
- *   next available weekday in the same week.
- * - Skipped weekend days do not roll into the following week.
- */
-/**
  * Configuration: which weekdays are "rest" (no swim) per plan-week.
  * Plan weeks 1-3 have rest days to ease back into swimming after a long break.
  * Index is the plan week number (1-indexed). Each value is an array of
@@ -2534,8 +2714,23 @@ function getSessionColor(idx){
   return SESSION_COLORS[idx] || 'var(--muted)';
 }
 
+/**
+ * Returns which session corresponds to a given date.
+ *
+ * NEW LOGIC (continuous queue):
+ * - Saturdays and Sundays are FIXED: always sessions 6 and 7 respectively
+ *   (with phase-1 distance softening for weeks 1-3).
+ * - Weekdays (Mon-Fri, excluding rest days) form a CONTINUOUS queue of
+ *   short sessions: 1 → 2 → 3 → 4 → 5 → 1 → 2 → 3 ... It NEVER resets.
+ * - Past weekday completed → consumes one position from the queue.
+ * - Past weekday missed/skipped → does NOT consume, the session "waits"
+ *   for the next swimmable weekday (even into the following week).
+ * - Today and future weekdays are simulated as completed when computing
+ *   what session a future date will show, so the calendar can answer
+ *   "what session would I do on June 12?" deterministically.
+ */
 function getSessionForDate(iso){
-  // Rest day → no session
+  // Rest day: never any session.
   if(isRestDay(iso)){
     return { sessionIdx: null, session: null, isRest: true };
   }
@@ -2544,11 +2739,11 @@ function getSessionForDate(iso){
   const dow = dayOfWeekMonFirst(d);
   const week = weekNumber(iso);
 
-  // Weekends are fixed (with phase-1 distance softening)
+  // Weekends are fixed: their own long session, with phase-1 distance softening.
+  // Saturday is always session 6, Sunday is always session 7.
   if(dow === 6 || dow === 7){
     const baseSession = PLAN.sessions[dow];
     if(week <= 3){
-      // Return a softened version for phase 1
       return {
         sessionIdx: dow,
         session: scaleLongSession(baseSession, 900),
@@ -2558,39 +2753,44 @@ function getSessionForDate(iso){
     return { sessionIdx: dow, session: baseSession, isRest: false };
   }
 
-  // Weekday: walk back to Monday of the same week and replay the queue
-  const monday = new Date(d);
-  monday.setDate(d.getDate() - (dow - 1));
+  // ---------- WEEKDAY: continuous queue ----------
+  // Queue position = number of weekdays (Mon-Fri, non-rest, non-weekend)
+  // strictly between startDate and the target date that have been "consumed".
+  // Past consumed if marked done. Today/future days strictly before target
+  // are assumed consumed (so the future is projected).
+  const todayIso = todayISO();
+  const startD = parseISO(state.startDate);
+  let queuePos = 0;
 
-  // Available short-session pool for this week, in order: 1,2,3,4,5
-  // BUT exclude any session indexes that fall on rest days this week
-  // (because we don't want to "queue up" a session for a rest day)
-  // Actually no — the pool is the available sessions, the rest days just mean
-  // those calendar slots are skipped automatically. The pool size stays 5,
-  // but with fewer non-rest days available, some sessions just won't fit.
-  const pool = [1, 2, 3, 4, 5];
+  const cursor = new Date(startD);
+  const targetTime = d.getTime();
+  while(cursor.getTime() < targetTime){
+    const cIso = isoOf(cursor);
+    const cDow = dayOfWeekMonFirst(cursor);
 
-  // For each calendar day from Monday up to (but not including) the target date,
-  // consume one session if that day was marked done (skipping rest days entirely)
-  for(let i = 0; i < dow - 1; i++){
-    const dayDate = new Date(monday);
-    dayDate.setDate(monday.getDate() + i);
-    const dayIso = isoOf(dayDate);
-
-    // Rest days don't consume from the pool (they're not training days)
-    if(isRestDay(dayIso)) continue;
-
-    const log = state.logs[dayIso];
-    if(log && log.done){
-      pool.shift();
+    // Skip weekends and rest days — they don't touch the weekday queue.
+    if(cDow >= 6 || isRestDay(cIso)){
+      cursor.setDate(cursor.getDate() + 1);
+      continue;
     }
+
+    const isPast = cIso < todayIso;
+    const log = state.logs[cIso];
+
+    if(isPast){
+      // Past weekday: only consume if it was done.
+      if(log && log.done) queuePos++;
+    } else {
+      // Today or future weekday strictly before target: assume completion.
+      queuePos++;
+    }
+
+    cursor.setDate(cursor.getDate() + 1);
   }
 
-  if(pool.length === 0){
-    return { sessionIdx: null, session: null, isRest: false };
-  }
-
-  const idx = pool[0];
+  // Map queue position to session index 1..5 (cycling).
+  // queuePos=0 → session 1, queuePos=5 → session 1 again, etc.
+  const idx = (queuePos % 5) + 1;
   return { sessionIdx: idx, session: PLAN.sessions[idx], isRest: false };
 }
 
@@ -3576,14 +3776,6 @@ function renderProgreso(){
 
 /**
  * Animates all elements with [data-animate-num] from 0 to their final value.
- * Reads the final value from the element's text content, replaces it with 0,
- * then counts up smoothly using requestAnimationFrame.
- *
- * Format support:
- *   - Plain integers: "42" → counts up to 42
- *   - Decimals (1 place): "1.2" → counts up to 1.2
- *   - With prefix/suffix preserved by reading data-prefix/data-suffix or
- *     by being placed inside an element where surrounding text stays fixed
  */
 function animateNumbers(){
   const els = document.querySelectorAll('[data-animate-num]');
@@ -3671,20 +3863,34 @@ function nextMilestone(total){
 
 /* --------- TAB: EN SECO --------- */
 function renderSeco(){
-  // Always re-read TODAY (not cached) so it auto-resets each day
-  const today = todayISO();
-  const todayLog = state.logs[today] || {};
-  const dryDone = todayLog.dryDone || [];
+  const today = new Date();
+  const dow = dayOfWeekMonFirst(today);
+  const todayIso = todayISO();
+  const todayRoutine = PLAN.dryExercises[dow];
+  const log = state.logs[todayIso] || {};
+  const dryDone = log.dryDone || [];
 
-  const todayD = new Date();
-  const niceDate = DOW_FULL[todayD.getDay()] + ', ' + todayD.getDate() + ' ' + MONTHS[todayD.getMonth()];
-  const dow = dayOfWeekMonFirst(todayD);
-  const routine = PLAN.dryExercises[dow];
+  let html = `<section class="section">
+    <h3 class="section-title">Hoy · ${DOW_FULL[today.getDay()]}</h3>
+    <div class="hero" style="padding:20px 22px;">
+      <div class="hero-meta">
+        <div class="hero-day">RUTINA EN SECO</div>
+        <div class="phase-chip">${todayRoutine.duration}</div>
+      </div>
+      <h1 class="hero-title" style="font-size:24px;">${todayRoutine.name}</h1>
+      <div class="hero-sub">Complementa tu sesión de piscina · al despertar o al volver del trabajo</div>
+    </div>
+  </section>
 
-  const renderDryItem = (ex, key, done) => `
-    <div class="dry-item ${done?'done':''}" id="dry-${key}">
-      <div class="dry-row" data-action="toggle-expand" data-key="${key}">
-        <button class="dry-check" data-action="toggle-done" data-key="${key}" aria-label="Marcar hecho">
+  <section class="section">
+    <h3 class="section-title"><span>Ejercicios</span><span style="color:${dryDone.length===todayRoutine.exercises.length?'var(--coral)':'var(--muted)'};">${dryDone.length}/${todayRoutine.exercises.length}</span></h3>
+    <div class="dry-list">`;
+
+  todayRoutine.exercises.forEach((ex, i)=>{
+    const done = dryDone.includes(i);
+    html += `<div class="dry-item ${done?'done':''}" id="dry-${i}" data-idx="${i}">
+      <div class="dry-row" data-action="toggle-dry-expand">
+        <button class="dry-check" data-action="toggle-dry-done" aria-label="Marcar hecho">
           <span class="tick"></span>
         </button>
         <div class="dry-name">
@@ -3693,453 +3899,623 @@ function renderSeco(){
         </div>
         <div class="dry-reps">${ex.reps}</div>
       </div>
-      <div class="dry-desc">${ex.desc || ''}</div>
+      <div class="dry-desc">${ex.desc}</div>
     </div>`;
-
-  let html = `<section class="section">
-    <p class="muted" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;padding:0 6px 8px;color:var(--muted);">${niceDate}</p>
-    <div class="hero" style="background:linear-gradient(155deg, var(--abyss) 0%, var(--water) 100%);margin-bottom:14px;">
-      <div class="hero-meta">
-        <div class="hero-day">Hoy en seco</div>
-        <div class="phase-chip">${routine.duration}</div>
-      </div>
-      <h1 class="hero-title" style="font-size:26px;">${routine.name}</h1>
-      <div class="hero-sub">${routine.exercises.length} ejercicios</div>
-    </div>
-    <div class="dry-list">`;
-  routine.exercises.forEach((ex, i)=>{
-    const key = 'd'+dow+'_'+i;
-    html += renderDryItem(ex, key, dryDone.includes(key));
   });
-  html += `</div>
-  </section>
+  html += `</div></section>
 
   <section class="section">
-    <h3 class="section-title">La semana entera</h3>
-    <div class="dry-list" style="font-size:13px;">`;
-  for(let d=1; d<=7; d++){
-    const r = PLAN.dryExercises[d];
-    const dn = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'][d-1];
-    const isToday = d===dow;
-    html += `<div style="padding:12px 14px;border-bottom:1px solid var(--line-soft);${isToday?'background:var(--sand);':''}">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;">
-        <div style="font-weight:${isToday?'600':'500'};color:${isToday?'var(--abyss)':'var(--ink)'};">${dn}${isToday?' · hoy':''}</div>
-        <div class="dry-reps" style="font-size:12px;">${r.duration}</div>
-      </div>
-      <div class="muted" style="font-size:13px;margin-top:2px;">${r.name}</div>
-    </div>`;
-  }
-  html += `</div>
-  </section>
-
-  <section class="section">
-    <p class="muted center" style="font-size:13px;padding:0 14px;">Toca cualquier ejercicio para ver cómo hacerlo. El círculo de la izquierda lo marca como hecho.<br><br>Las marcas se reinician cada día.</p>
+    <div class="stat-card" style="text-align:center;padding:18px;">
+      <div class="stat-label" style="margin-bottom:8px;">¿Cuándo hacer la rutina?</div>
+      <p style="font-size:13.5px;line-height:1.55;color:var(--ink);">
+        <strong>Ideal:</strong> al despertar (movilidad) o al volver del trabajo, <strong>antes de cenar</strong>. Nunca justo después de la piscina si vas con prisa.
+      </p>
+      <p style="font-size:12px;margin-top:10px;color:var(--muted);font-style:italic;">
+        Sin material en casa. Total: 5–10 min.
+      </p>
+    </div>
   </section>`;
 
   $content.innerHTML = html;
 
-  // Tap on row → expand description
-  document.querySelectorAll('.dry-row').forEach(row=>{
+  document.querySelectorAll('.dry-item').forEach(el=>{
+    const idx = parseInt(el.dataset.idx);
+    const row = el.querySelector('.dry-row');
+    const checkBtn = el.querySelector('.dry-check');
+
     row.addEventListener('click', (e)=>{
       if(e.target.closest('.dry-check')) return;
-      const item = row.parentElement;
-      item.classList.toggle('expanded');
+      el.classList.toggle('expanded');
     });
-  });
-
-  // Tap on check button → toggle done (in-place)
-  document.querySelectorAll('.dry-check').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
+    checkBtn.addEventListener('click', async (e)=>{
       e.stopPropagation();
-      toggleDry(btn.dataset.key, btn.closest('.dry-item'));
+      await toggleDry(idx, el);
     });
   });
 }
 
-async function toggleDry(key, itemEl){
-  // Always use TODAY's date (auto-reset behavior)
-  const today = todayISO();
-  if(!state.logs[today]) state.logs[today] = {};
-  if(!state.logs[today].dryDone) state.logs[today].dryDone = [];
-  const arr = state.logs[today].dryDone;
-  const pos = arr.indexOf(key);
-  if(pos>=0) arr.splice(pos,1); else arr.push(key);
+async function toggleDry(idx, itemEl){
+  const todayIso = todayISO();
+  if(!state.logs[todayIso]) state.logs[todayIso] = {};
+  if(!state.logs[todayIso].dryDone) state.logs[todayIso].dryDone = [];
+  const arr = state.logs[todayIso].dryDone;
+  const pos = arr.indexOf(idx);
+  if(pos>=0) arr.splice(pos,1); else arr.push(idx);
 
-  // In-place visual update (instant, no re-render)
   if(itemEl){
-    itemEl.classList.toggle('done', arr.includes(key));
+    itemEl.classList.toggle('done', arr.includes(idx));
   }
-  // Update dots
-  updateTabDots();
-  // Save in background
-  saveState();
+  await saveState();
 }
 
-/* --------- TAB: CRONÓMETRO 400 m --------- */
-let timerInterval = null;
-let cachedTests = null; // loaded once per render
-
-async function loadTests(){
+/* --------- TEST 400 m STORAGE --------- */
+let cachedTests = null;
+function loadTests(){
+  if(cachedTests) return cachedTests;
   try{
     const raw = localStorage.getItem('brazada_tests400');
-    if(raw) return JSON.parse(raw);
-  }catch(e){ /* none yet */ }
-  return [];
+    cachedTests = raw ? JSON.parse(raw) : [];
+  }catch(e){ cachedTests = []; }
+  return cachedTests;
 }
-async function saveTests(tests){
-  try{
-    localStorage.setItem('brazada_tests400', JSON.stringify(tests));
-  }catch(e){ console.error('save tests failed', e); }
+function saveTests(arr){
+  cachedTests = arr;
+  try{ localStorage.setItem('brazada_tests400', JSON.stringify(arr)); }catch(e){}
 }
 
-async function renderCronometro(){
-  const t = state.timer;
-  const elapsed = t.running ? (Date.now() - t.started) : t.ms;
-  const display = formatTime(elapsed);
+/* --------- TAB: CRONÓMETRO (Test 400 m) --------- */
+function renderCronometro(){
+  const tests = loadTests();
+  const sortedAsc = [...tests].sort((a,b)=>a.date.localeCompare(b.date));
+  const best = tests.length ? Math.min(...tests.map(t=>t.timeMs)) : null;
+  const last = tests.length ? sortedAsc[sortedAsc.length-1] : null;
+  const first = tests.length ? sortedAsc[0] : null;
+  const improvement = (best && first && best < first.timeMs) ? (first.timeMs - best) : 0;
 
-  cachedTests = await loadTests();
-  const tests = cachedTests;
+  const fmt = formatTime;
 
-  let testList = '';
-  if(tests.length === 0){
-    testList = `<div class="log-empty"><span class="big">Sin tests todavía</span>Mide tu 400 m crol cada 4 semanas</div>`;
-  } else {
-    // Sort by date asc to compute deltas, then show desc
-    const sorted = [...tests].sort((a,b)=> (a.ms||0)===(b.ms||0)? a.date.localeCompare(b.date) : 0);
-    const byDate = [...tests].sort((a,b)=> a.date.localeCompare(b.date));
-    byDate.forEach((test, i)=>{
-      test._delta = (i>0) ? (test.ms - byDate[i-1].ms) : null;
-    });
-    const reverse = [...byDate].reverse();
-    reverse.forEach((test, idx)=>{
-      let deltaHtml = '';
-      if(test._delta !== null){
-        const sign = test._delta < 0 ? '−' : '+';
-        const abs = Math.abs(test._delta);
-        const color = test._delta < 0 ? 'var(--coral)' : 'var(--muted)';
-        deltaHtml = `<div style="font-size:11px;color:${color};font-weight:600;margin-top:2px;">${sign}${formatTime(abs)} vs anterior</div>`;
-      }
-      testList += `<div class="log-item">
-        <div class="log-row">
-          <div>
-            <div class="log-date">${fmtDateShort(test.date)}</div>
-            ${deltaHtml}
-          </div>
-          <div class="log-meta" style="align-items:center;gap:14px;">
-            <span class="log-dist" style="font-size:18px;">${test.time}</span>
-            <button class="del-test" data-test-id="${test.id || test.date+'_'+test.ms}" aria-label="Borrar" title="Borrar"
-              style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px 6px;line-height:1;">×</button>
-          </div>
-        </div>
+  let chartHTML = '';
+  if(sortedAsc.length >= 2){
+    const maxT = Math.max(...sortedAsc.map(t=>t.timeMs));
+    const minT = Math.min(...sortedAsc.map(t=>t.timeMs));
+    const range = Math.max(1, maxT - minT);
+    let bars = '';
+    sortedAsc.slice(-6).forEach((t, i)=>{
+      const h = 20 + ((maxT - t.timeMs) / range) * 80;
+      const isBest = t.timeMs === minT;
+      bars += `<div class="chart-col">
+        <div class="chart-bar" style="height:${h}%;background:${isBest?'linear-gradient(180deg, var(--coral), #d56549)':'linear-gradient(180deg, var(--tide), var(--water))'};"></div>
+        <div class="chart-label">${fmtDateShort(t.date).slice(0,5)}</div>
       </div>`;
     });
+    chartHTML = `<div class="chart">
+      <div class="chart-title">Evolución (últimos ${Math.min(6, sortedAsc.length)})</div>
+      <div class="chart-bars">${bars}</div>
+    </div>`;
   }
 
-  const html = `<section class="section">
+  let html = `<section class="section">
     <div class="timer-card">
-      <div class="hero-day" style="color:var(--foam);opacity:0.7;">Test 400 m crol</div>
-      <div class="timer-display">${display}</div>
+      <div style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;font-weight:600;color:var(--foam);opacity:0.85;">
+        Test 400 m crol
+      </div>
+      <div class="timer-display" id="timerDisplay">${fmt(state.timer.ms)}</div>
       <div class="timer-btns">
-        ${t.running
-          ? `<button class="timer-btn" id="btnStop">Parar</button>`
-          : `<button class="timer-btn" id="btnStart">${t.ms>0?'Continuar':'Empezar'}</button>`
-        }
-        ${t.ms>0 && !t.running ? `<button class="timer-btn" id="btnSaveTime">Guardar</button>` : ''}
-        ${t.ms>0 ? `<button class="timer-btn" id="btnReset">Reset</button>` : ''}
+        <button class="timer-btn" id="btnStart">${state.timer.running?'Pausa':'Iniciar'}</button>
+        <button class="timer-btn" id="btnReset">Reset</button>
+        <button class="timer-btn" id="btnSaveTime" ${!state.timer.ms?'disabled style="opacity:0.4;"':''}>Guardar</button>
       </div>
     </div>
-  </section>
-
-  <section class="section">
-    <button class="btn btn-secondary btn-full" id="btnManual" style="display:flex;align-items:center;justify-content:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Introducir tiempo manualmente
-    </button>
-    <p class="muted center" style="font-size:12px;margin-top:8px;">Para cuando te cronometras con tu reloj</p>
-  </section>
-
-  <section class="section">
-    <h3 class="section-title">Historial de tests</h3>
-    <div class="log-list">${testList}</div>
-    <p class="muted center" style="font-size:13px;margin-top:14px;">Recomendado: cada 4 semanas, mismo ritmo de ejecución (400 m crol continuos).</p>
+    <div style="text-align:center;margin-top:10px;">
+      <button class="btn btn-secondary" id="btnManualTime" style="font-size:12px;padding:8px 14px;">+ Añadir tiempo manualmente</button>
+    </div>
   </section>`;
+
+  if(tests.length === 0){
+    html += `<section class="section">
+      <div class="stat-card" style="text-align:center;padding:30px 20px;">
+        <div class="stat-label" style="margin-bottom:10px;">¿Por qué este test?</div>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink);text-align:left;">
+          Nadar <strong>400 m a crol cómodo</strong> es el indicador clásico de progreso en natación. Mide tu fondo aeróbico real.
+        </p>
+        <p style="font-size:13.5px;line-height:1.55;color:var(--ink);text-align:left;margin-top:10px;">
+          <strong>Cómo:</strong> calienta 100-200 m, descansa 1 min, y nada 400 m sin parar a un ritmo que puedas mantener. No es un sprint.
+        </p>
+        <p style="font-size:12px;margin-top:14px;color:var(--muted);font-style:italic;">
+          Hazlo cada 3-4 semanas (al final de cada fase) y ve viendo bajar el tiempo.
+        </p>
+      </div>
+    </section>`;
+  } else {
+    html += `<section class="section">
+      <h3 class="section-title">Tus tiempos</h3>
+      <div class="stat-grid">
+        <div class="stat-card flame">
+          <div class="stat-label">Mejor marca</div>
+          <div class="stat-value" style="font-size:30px;">${fmt(best)}</div>
+          <div class="stat-sub">${tests.length} test${tests.length>1?'s':''} registrado${tests.length>1?'s':''}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Última</div>
+          <div class="stat-value" style="font-size:24px;">${fmt(last.timeMs)}</div>
+          <div class="stat-sub">${fmtDateShort(last.date)}</div>
+        </div>
+        ${improvement > 0 ? `<div class="stat-card featured">
+          <div class="stat-label">Mejora total</div>
+          <div class="stat-value" style="color:var(--coral);">−${fmt(improvement)}</div>
+          <div class="stat-sub">desde tu primer test</div>
+        </div>` : ''}
+      </div>
+    </section>
+
+    ${chartHTML ? `<section class="section">${chartHTML}</section>` : ''}
+
+    <section class="section">
+      <h3 class="section-title">Historial</h3>
+      <div class="log-list">
+        ${[...tests].sort((a,b)=>b.date.localeCompare(a.date)).map(t=>`
+          <div class="log-item">
+            <div class="log-row">
+              <div class="log-date">${fmtDateShort(t.date)}</div>
+              <div class="log-meta">
+                <span class="log-dist">${fmt(t.timeMs)}</span>
+                ${t.timeMs === best ? '<span style="color:var(--coral);font-size:11px;font-weight:600;">MEJOR</span>' : ''}
+              </div>
+            </div>
+            ${t.notes ? `<div class="log-notes">"${escapeHtml(t.notes)}"</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    </section>`;
+  }
 
   $content.innerHTML = html;
 
-  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-
-  const startBtn = document.getElementById('btnStart');
-  const stopBtn = document.getElementById('btnStop');
-  const resetBtn = document.getElementById('btnReset');
-  const saveBtn = document.getElementById('btnSaveTime');
-  const manualBtn = document.getElementById('btnManual');
-
-  if(startBtn) startBtn.onclick = ()=>{
-    state.timer.running = true;
-    state.timer.started = Date.now() - state.timer.ms;
-    startTimerLoop();
+  // Wire up timer
+  document.getElementById('btnStart').addEventListener('click', ()=>{
+    if(state.timer.running){
+      state.timer.running = false;
+      state.timer.ms += Date.now() - state.timer.started;
+      state.timer.started = null;
+    } else {
+      state.timer.running = true;
+      state.timer.started = Date.now();
+      startTimerLoop();
+    }
     renderCronometro();
-  };
-  if(stopBtn) stopBtn.onclick = ()=>{
-    state.timer.ms = Date.now() - state.timer.started;
-    state.timer.running = false;
-    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-    renderCronometro();
-  };
-  if(resetBtn) resetBtn.onclick = ()=>{
-    state.timer = { running:false, ms:0, started:null };
-    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
-    renderCronometro();
-  };
-  if(saveBtn) saveBtn.onclick = async ()=>{
-    const all = await loadTests();
-    all.push({
-      id: 't_'+Date.now(),
-      date: todayISO(),
-      time: formatTime(state.timer.ms),
-      ms: state.timer.ms,
-      source: 'cronometro'
-    });
-    await saveTests(all);
-    state.timer = { running:false, ms:0, started:null };
-    toast('Tiempo guardado');
-    renderCronometro();
-  };
-  if(manualBtn) manualBtn.onclick = ()=> openManualModal();
-
-  // Delete buttons
-  document.querySelectorAll('.del-test').forEach(btn=>{
-    btn.addEventListener('click', async (e)=>{
-      e.stopPropagation();
-      if(!confirm('¿Borrar este tiempo?')) return;
-      const id = btn.dataset.testId;
-      const all = await loadTests();
-      const filtered = all.filter(t => (t.id || t.date+'_'+t.ms) !== id);
-      await saveTests(filtered);
-      toast('Tiempo borrado');
-      renderCronometro();
-    });
   });
-
-  if(state.timer.running) startTimerLoop();
+  document.getElementById('btnReset').addEventListener('click', ()=>{
+    state.timer.running = false;
+    state.timer.ms = 0;
+    state.timer.started = null;
+    renderCronometro();
+  });
+  document.getElementById('btnSaveTime').addEventListener('click', ()=>{
+    let totalMs = state.timer.ms;
+    if(state.timer.running) totalMs += Date.now() - state.timer.started;
+    if(totalMs <= 0) return;
+    const tests = loadTests();
+    tests.push({
+      date: todayISO(),
+      timeMs: totalMs,
+      notes: ''
+    });
+    saveTests(tests);
+    state.timer.running = false;
+    state.timer.ms = 0;
+    state.timer.started = null;
+    toast('¡Test guardado! 🏊');
+    renderCronometro();
+  });
+  document.getElementById('btnManualTime').addEventListener('click', openManualModal);
 }
 
-/* --------- MANUAL TIME ENTRY MODAL --------- */
 function openManualModal(){
-  const todayIso = todayISO();
   const html = `
     <div class="modal-bg" id="modalBg">
       <div class="modal" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <h3>Introducir tiempo</h3>
+        <h3>Añadir tiempo manualmente</h3>
+        <p class="muted" style="margin-bottom:14px;">Por si lo cronometraste fuera de la app.</p>
 
         <div class="field">
-          <label>Fecha</label>
-          <input type="date" id="mDate" value="${todayIso}" max="${todayIso}"
-            style="width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;color:var(--ink);">
+          <label>Minutos</label>
+          <input type="number" id="fMin" inputmode="numeric" placeholder="8" min="0" max="59">
         </div>
-
         <div class="field">
-          <label>Tu tiempo de 400 m</label>
-          <div style="display:flex;gap:8px;align-items:center;">
-            <input type="number" id="mMin" inputmode="numeric" placeholder="MM" min="0" max="59" maxlength="2"
-              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
-            <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">:</span>
-            <input type="number" id="mSec" inputmode="numeric" placeholder="SS" min="0" max="59" maxlength="2"
-              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
-            <span style="font-family:'Fraunces',serif;font-size:28px;color:var(--muted);">.</span>
-            <input type="number" id="mCs" inputmode="numeric" placeholder="CC" min="0" max="99" maxlength="2"
-              style="flex:1;text-align:center;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:28px;font-weight:500;color:var(--ink);">
-          </div>
-          <p class="muted" style="font-size:12px;margin-top:8px;">Min : Seg . Centésimas (centésimas opcional)</p>
+          <label>Segundos</label>
+          <input type="number" id="fSec" inputmode="numeric" placeholder="30" min="0" max="59">
         </div>
-
+        <div class="field">
+          <label>Notas (opcional)</label>
+          <textarea id="fNotes" placeholder="Sensaciones..."></textarea>
+        </div>
         <div class="actions">
-          <button class="btn btn-secondary" id="btnCancelM">Cancelar</button>
-          <button class="btn btn-primary" id="btnSaveM">Guardar</button>
+          <button class="btn btn-secondary" id="btnCancel">Cancelar</button>
+          <button class="btn btn-primary" id="btnSave">Guardar</button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
   document.getElementById('modalRoot').innerHTML = html;
 
-  // Auto-advance focus
-  const minI = document.getElementById('mMin');
-  const secI = document.getElementById('mSec');
-  const csI = document.getElementById('mCs');
-  setTimeout(()=>minI.focus(), 100);
-  minI.addEventListener('input', ()=>{
-    if(minI.value.length >= 2) secI.focus();
-  });
-  secI.addEventListener('input', ()=>{
-    if(secI.value.length >= 2) csI.focus();
-  });
-
   document.getElementById('modalBg').addEventListener('click', closeModal);
-  document.getElementById('btnCancelM').onclick = closeModal;
-  document.getElementById('btnSaveM').onclick = async ()=>{
-    const min = parseInt(minI.value) || 0;
-    const sec = parseInt(secI.value) || 0;
-    const cs = parseInt(csI.value) || 0;
-    const date = document.getElementById('mDate').value || todayISO();
-
-    if(min === 0 && sec === 0){
-      toast('Introduce un tiempo válido');
-      return;
-    }
-    if(sec >= 60){
-      toast('Los segundos deben ser 0–59');
-      return;
-    }
-
-    const ms = (min * 60 * 1000) + (sec * 1000) + (cs * 10);
-    const all = await loadTests();
-    all.push({
-      id: 't_'+Date.now(),
-      date,
-      time: formatTime(ms),
-      ms,
-      source: 'manual'
-    });
-    await saveTests(all);
+  document.getElementById('btnCancel').addEventListener('click', closeModal);
+  document.getElementById('btnSave').addEventListener('click', ()=>{
+    const min = parseInt(document.getElementById('fMin').value) || 0;
+    const sec = parseInt(document.getElementById('fSec').value) || 0;
+    const notes = document.getElementById('fNotes').value.trim();
+    const totalMs = (min*60 + sec)*1000;
+    if(totalMs <= 0){ toast('Tiempo no válido'); return; }
+    const tests = loadTests();
+    tests.push({ date: todayISO(), timeMs: totalMs, notes });
+    saveTests(tests);
     closeModal();
-    toast('Tiempo guardado 🏊');
+    toast('¡Tiempo guardado!');
     renderCronometro();
-  };
+  });
 }
+
 function startTimerLoop(){
-  if(timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(()=>{
-    const display = document.querySelector('.timer-display');
-    if(display && state.timer.running){
-      display.textContent = formatTime(Date.now() - state.timer.started);
-    }
-  }, 100);
+  if(!state.timer.running) return;
+  const display = document.getElementById('timerDisplay');
+  if(display){
+    const total = state.timer.ms + (Date.now() - state.timer.started);
+    display.textContent = formatTime(total);
+  }
+  requestAnimationFrame(startTimerLoop);
 }
+
 function formatTime(ms){
-  const total = Math.floor(ms/1000);
-  const m = Math.floor(total/60);
-  const s = total % 60;
-  const cs = Math.floor((ms % 1000)/10);
-  return pad(m)+':'+pad(s)+'.'+pad(cs);
+  if(!ms) return '00:00.0';
+  const totalSec = ms/1000;
+  const m = Math.floor(totalSec/60);
+  const s = Math.floor(totalSec%60);
+  const t = Math.floor((totalSec*10)%10);
+  return pad(m)+':'+pad(s)+'.'+t;
 }
 
-/* --------- TOAST --------- */
+/* ============================================================
+   UI HELPERS
+============================================================ */
 function toast(msg){
-  const root = document.getElementById('toastRoot');
-  root.innerHTML = `<div class="toast">${msg}</div>`;
-  setTimeout(()=>{ root.innerHTML = ''; }, 2200);
+  const t = document.getElementById('toastRoot');
+  t.innerHTML = `<div class="toast">${msg}</div>`;
+  setTimeout(()=>{ t.innerHTML=''; }, 2200);
 }
 
-/* --------- ROUTER --------- */
+/**
+ * Updates pulsing dots on tabs to indicate pending tasks.
+ * Hoy: dot if today's session has unfinished blocks (or not completed at all).
+ * En seco: dot if today's dry routine has unfinished exercises.
+ */
 function updateTabDots(){
-  // "Hoy" pending dot: show if today has an available session that hasn't been marked done or skipped
-  const today = todayISO();
-  const log = state.logs[today] || {};
-  const sessionInfo = getSessionForDate(today);
-  const hasSession = !!sessionInfo.session;
-  const pending = hasSession && !log.done && !log.skipped;
+  const todayIso = todayISO();
+  const log = state.logs[todayIso] || {};
 
-  // "En seco" pending dot: show if today's dry routine has any unfinished exercise
+  // ---- Hoy tab ----
+  const todayInfo = getSessionForDate(todayIso);
+  const todaySession = todayInfo.session;
+  let hoyHasPending = false;
+  if(todaySession && !log.done && !log.skipped){
+    const blocksDone = (log.blocksDone || []).length;
+    if(blocksDone < todaySession.blocks.length){
+      hoyHasPending = true;
+    }
+  }
+  const hoyTab = document.querySelector('.tab[data-tab="hoy"]');
+  if(hoyTab){
+    hoyTab.innerHTML = 'Hoy' + (hoyHasPending ? '<span class="dot"></span>' : '');
+  }
+
+  // ---- En seco tab ----
   const dow = dayOfWeekMonFirst(new Date());
   const dryRoutine = PLAN.dryExercises[dow];
-  const dryDone = log.dryDone || [];
-  const allDryKeys = dryRoutine.exercises.map((_,i) => 'd'+dow+'_'+i);
-  const dryPending = allDryKeys.some(k => !dryDone.includes(k));
-
-  document.querySelectorAll('.tab').forEach(t=>{
-    const existingDot = t.querySelector('.dot');
-    if(existingDot) existingDot.remove();
-    if(t.dataset.tab === 'hoy' && pending){
-      t.insertAdjacentHTML('beforeend', '<span class="dot"></span>');
-    }
-    if(t.dataset.tab === 'seco' && dryPending){
-      t.insertAdjacentHTML('beforeend', '<span class="dot"></span>');
-    }
-  });
+  const dryDone = (log.dryDone || []).length;
+  const secoHasPending = dryRoutine && dryDone < dryRoutine.exercises.length;
+  const secoTab = document.querySelector('.tab[data-tab="seco"]');
+  if(secoTab){
+    secoTab.innerHTML = 'En seco' + (secoHasPending ? '<span class="dot"></span>' : '');
+  }
 }
 
+/* ============================================================
+   ROUTER
+============================================================ */
 function render(){
-  updateTopDate();
-  updateTabDots();
   switch(state.activeTab){
     case 'hoy': renderHoy(); break;
     case 'semana': renderSemana(); break;
     case 'historial': renderHistorial(); break;
-    case 'progreso': renderProgreso(); break;
+    case 'progreso': renderProgreso(); animateNumbers(); break;
     case 'seco': renderSeco(); break;
     case 'cronometro': renderCronometro(); break;
   }
-  // Animate numeric values after the DOM is in place
-  requestAnimationFrame(() => animateNumbers());
+  updateTopDate();
+  updateTabDots();
 }
 
-/* --------- WELCOME SCREEN (first run) --------- */
-function showWelcomeScreen(){
-  return new Promise(resolve => {
-    const html = `
-      <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-glow tl"></div>
-        <div class="welcome-glow br"></div>
-        <svg class="welcome-waves" viewBox="0 0 400 800" preserveAspectRatio="none">
-          <path d="M 0 400 Q 100 380 200 400 T 400 400 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.5"/>
-          <path d="M 0 460 Q 100 440 200 460 T 400 460 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.4"/>
-          <path d="M 0 520 Q 100 500 200 520 T 400 520 L 400 800 L 0 800 Z" fill="#a8d8de" opacity="0.3"/>
-        </svg>
+/* ============================================================
+   DAILY GREETING (once per day on first launch)
+============================================================ */
 
-        <div class="welcome-top">
-          <div class="welcome-mark">Brazada<span class="dot">.</span></div>
+/**
+ * Pool of motivational quotes. Picked deterministically per day
+ * via hash(ISO) % length, so the quote is stable across the day
+ * but rotates from one day to the next.
+ *
+ * Mix of voices: poetic ("el agua…"), practical ("hoy es un paso"),
+ * about consistency, about the body's gratitude, about the return.
+ */
+const DAILY_QUOTES = [
+  // Sobre la vuelta al agua
+  "El agua siempre te recuerda. Solo hay que volver a presentarse.",
+  "No estás empezando de cero. Estás empezando de nuevo, que es muy distinto.",
+  "Tu cuerpo recuerda más de lo que tú crees.",
+  "Cada brazada es una conversación con quien fuiste.",
+  "Diez años fuera no son diez años perdidos: son diez años de ganas.",
+  // Sobre la constancia
+  "El progreso no se ve en un día. Se ve en treinta.",
+  "La sesión perfecta es la que haces.",
+  "Hoy no tienes que ser rápido. Solo tienes que estar.",
+  "La constancia siempre vence al talento que descansa.",
+  "Mejor 20 minutos en el agua que 60 pensándolo.",
+  "Lo difícil ya pasó: decidirte. El resto es nadar.",
+  // Prácticas / técnicas
+  "Brazada larga, cabeza tranquila.",
+  "El agua premia a quien no la pelea.",
+  "Respira cuando lo necesites, no cuando deberías.",
+  "Si te falta el aire, baja el ritmo. No al revés.",
+  "Mejor pocos largos bien hechos que muchos a medias.",
+  "La técnica es libertad: cuanto mejor nadas, menos te cansas.",
+  // Sobre el cuerpo y la salud
+  "Hoy tus hombros, tu espalda y tu cabeza te lo agradecerán.",
+  "Lo que haces hoy en el agua se nota mañana fuera de ella.",
+  "Nadar es el único deporte donde el cuerpo flota mientras la mente se despeja.",
+  "Cada vez que entras al agua, le restas un día al estrés.",
+  "El crol que haces hoy te quita un dolor de espalda futuro.",
+  // Filosóficas / poéticas
+  "El agua no juzga. Solo te recibe.",
+  "Bajo el agua no hay pantallas, ni notificaciones, ni jefe.",
+  "La piscina es el sitio más callado del mundo, aunque esté llena.",
+  "Nadie ha salido peor de una piscina de lo que entró.",
+  "Hoy te regalas 45 minutos sin tu propia voz.",
+  "Cada largo es una pequeña victoria que nadie verá. Pero tú sí.",
+  // Motivacionales clásicas con sabor
+  "Empieza. Eso es todo.",
+  "El primer largo siempre es el más caro.",
+  "Si aún dudas, ya estás en el coche.",
+  "Hoy toca. Y eso es suficiente.",
+  "Pequeños días, grandes nadadores.",
+  "El agua te espera. Lleva esperándote diez años. Puede esperar 10 minutos más mientras te cambias.",
+  // Sobre el descanso
+  "Descansar también es entrenar. Hoy te toca lo difícil: no hacer nada.",
+  "El músculo crece cuando descansas, no cuando entrenas.",
+  "Hoy tu trabajo es no trabajar.",
+  "Un día de pausa hoy son dos sesiones mejores mañana.",
+  // Recordatorios suaves
+  "No es por dónde llegas. Es por dónde vas.",
+  "Ningún nadador del mundo ha empezado nadando bien.",
+  "Tu única competencia eres tú de ayer.",
+  "Cuando dudes, recuerda: ya estás en bañador.",
+];
+
+/** Quotes specifically for rest days (positive, calm, validating). */
+const REST_DAY_QUOTES = [
+  "Hoy descansas. Y eso también es entrenar.",
+  "El cuerpo se construye en la pausa. Disfrútala.",
+  "Hoy tu trabajo es no trabajar. Bien hecho.",
+  "Un día sin nadar no es un día perdido. Es un día de regalo a tus hombros.",
+  "La pausa es parte del plan. No la culpes.",
+  "Recuperarse también es progresar.",
+  "Hoy no tienes nada que demostrar.",
+];
+
+/**
+ * Stable hash of an ISO date string → integer.
+ * Used to pick the same quote all day but a different one each day.
+ */
+function dailyHash(iso){
+  let h = 0;
+  for(let i = 0; i < iso.length; i++){
+    h = ((h << 5) - h) + iso.charCodeAt(i);
+    h |= 0; // 32-bit
+  }
+  return Math.abs(h);
+}
+
+function quoteForToday(isRest){
+  const iso = todayISO();
+  const pool = isRest ? REST_DAY_QUOTES : DAILY_QUOTES;
+  const idx = dailyHash(iso) % pool.length;
+  return pool[idx];
+}
+
+/**
+ * Returns true if the daily welcome screen should be shown right now.
+ * Logic: shown at most once per calendar day. We persist the last
+ * shown ISO date in localStorage as 'brazada_daily_last'.
+ */
+function shouldShowDailyScreen(){
+  try{
+    const last = localStorage.getItem('brazada_daily_last');
+    return last !== todayISO();
+  }catch(e){
+    return false; // if storage broken, don't annoy the user
+  }
+}
+
+function markDailyShown(){
+  try{
+    localStorage.setItem('brazada_daily_last', todayISO());
+  }catch(e){}
+}
+
+/**
+ * Full-screen daily greeting. Shows quote + today's session info.
+ * Closes manually via "Empezar" button.
+ */
+function showDailyScreen(){
+  const iso = todayISO();
+  const d = parseISO(iso);
+  const sessionInfo = getSessionForDate(iso);
+  const session = sessionInfo.session;
+  const isRest = sessionInfo.isRest;
+
+  const dateLabel = `${DOW_FULL[d.getDay()]} ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+  const quote = quoteForToday(isRest);
+
+  let centerInner;
+  if(isRest){
+    centerInner = `
+      <div class="daily-quote">${quote}</div>
+      <div class="daily-divider"></div>
+      <div class="daily-session-label">Hoy</div>
+      <div class="daily-session-name">Día de <em>descanso</em></div>
+    `;
+  } else if(session){
+    const nameParts = session.name.split(' ');
+    const firstWord = nameParts[0];
+    const restWords = nameParts.slice(1).join(' ');
+    centerInner = `
+      <div class="daily-quote">${quote}</div>
+      <div class="daily-divider"></div>
+      <div class="daily-session-label">Hoy te toca</div>
+      <div class="daily-session-name">${firstWord}${restWords ? ` <em>${restWords}</em>` : ''}</div>
+      <div class="daily-stats">
+        <div class="daily-stat">
+          <div class="v">${session.total}<span style="font-size:13px;opacity:0.6;"> m</span></div>
+          <div class="l">Distancia</div>
         </div>
-
-        <div class="welcome-center">
-          <div class="welcome-title">Brazada<span class="dot">.</span></div>
-          <div class="welcome-divider"></div>
-          <div class="welcome-tagline">tu diario personal<br>de natación</div>
+        <div class="daily-stat">
+          <div class="v">${session.blocks.length}</div>
+          <div class="l">Bloques</div>
         </div>
-
-        <div class="welcome-bottom">
-          <button class="welcome-cta" id="welcomeStart">Empezar el plan</button>
-          <div class="welcome-meta">12 semanas · adaptación → definición</div>
+        <div class="daily-stat">
+          <div class="v">${session.stroke.split(' ')[0]}</div>
+          <div class="l">Estilo</div>
         </div>
       </div>
     `;
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    document.body.appendChild(wrapper.firstElementChild);
+  } else {
+    // Fallback: no session and not flagged rest (shouldn't happen, but safe)
+    centerInner = `
+      <div class="daily-quote">${quote}</div>
+      <div class="daily-divider"></div>
+      <div class="daily-session-label">Hoy</div>
+      <div class="daily-session-name">Día <em>libre</em></div>
+    `;
+  }
 
-    document.getElementById('welcomeStart').addEventListener('click', () => {
-      const el = document.getElementById('welcomeScreen');
-      el.classList.add('exiting');
+  const ctaLabel = isRest ? 'Entendido' : 'Empezar el día';
+  const ctaClass = isRest ? 'daily-cta rest' : 'daily-cta';
+
+  const html = `
+    <div class="daily-screen" id="dailyScreen">
+      <div class="daily-glow tl"></div>
+      <div class="daily-glow br"></div>
+
+      <div class="daily-top">
+        <div class="daily-eyebrow">Buenos días</div>
+        <div class="daily-date">${dateLabel}</div>
+      </div>
+
+      <div class="daily-center">
+        ${centerInner}
+      </div>
+
+      <div class="daily-bottom">
+        <button class="${ctaClass}" id="dailyClose">${ctaLabel}</button>
+      </div>
+    </div>
+  `;
+
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper.firstElementChild);
+
+  const close = () => {
+    const el = document.getElementById('dailyScreen');
+    if(!el) return;
+    el.classList.add('exiting');
+    markDailyShown();
+    setTimeout(() => el.remove(), 350);
+  };
+  document.getElementById('dailyClose').addEventListener('click', close);
+}
+
+/* ============================================================
+   WELCOME SCREEN (first-time user)
+============================================================ */
+function showWelcomeScreen(){
+  const html = `
+    <div class="welcome-screen" id="welcomeScreen">
+      <svg class="welcome-waves" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M 0 200 Q 100 180 200 200 T 400 200" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+        <path d="M 0 280 Q 100 260 200 280 T 400 280" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+        <path d="M 0 360 Q 100 340 200 360 T 400 360" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+        <path d="M 0 440 Q 100 420 200 440 T 400 440" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+        <path d="M 0 520 Q 100 500 200 520 T 400 520" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+        <path d="M 0 600 Q 100 580 200 600 T 400 600" stroke="#a8d8de" stroke-width="1.5" fill="none"/>
+      </svg>
+      <div class="welcome-glow tl"></div>
+      <div class="welcome-glow br"></div>
+
+      <div class="welcome-top">
+        <div class="welcome-mark">Diario de natación<span class="dot"> ·</span></div>
+      </div>
+
+      <div class="welcome-center">
+        <h1 class="welcome-title">Brazada<span class="dot">.</span></h1>
+        <div class="welcome-divider"></div>
+        <p class="welcome-tagline">Vuelve al agua, una brazada a la vez.</p>
+      </div>
+
+      <div class="welcome-bottom">
+        <button class="welcome-cta" id="welcomeStart">Empezar mi plan</button>
+        <div class="welcome-meta">12 semanas · 7 días</div>
+      </div>
+    </div>
+  `;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = html;
+  document.body.appendChild(wrapper.firstElementChild);
+
+  document.getElementById('welcomeStart').addEventListener('click', () => {
+    const screen = document.getElementById('welcomeScreen');
+    screen.classList.add('exiting');
+    setTimeout(() => {
+      screen.remove();
       try{ localStorage.setItem('brazada_welcomed', '1'); }catch(e){}
-      setTimeout(() => {
-        el.remove();
-        resolve();
-      }, 400);
-    });
+    }, 400);
   });
 }
 
-/* --------- INIT --------- */
-(async ()=>{
+/* ============================================================
+   INIT
+============================================================ */
+(async function init(){
   await loadState();
 
-  // First run: show welcome screen
-  let welcomed = null;
-  try{ welcomed = localStorage.getItem('brazada_welcomed'); }catch(e){}
+  // Show welcome on very first launch
+  let welcomed = false;
+  try{ welcomed = localStorage.getItem('brazada_welcomed') === '1'; }catch(e){}
   if(!welcomed){
-    render();
-    await showWelcomeScreen();
-  } else {
-    render();
+    showWelcomeScreen();
+    // First launch: don't double-stack the daily greeting on top.
+    // Mark today as already greeted so it doesn't pop up on next session today.
+    markDailyShown();
+  } else if(shouldShowDailyScreen()){
+    // Returning user, first launch of this calendar day → daily greeting
+    showDailyScreen();
   }
+
+  render();
 })();
 
-/* --------- SERVICE WORKER (offline support) --------- */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch((err) => {
-      console.warn('SW registration failed:', err);
-    });
+// Service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW reg failed', err));
   });
 }
 </script>
